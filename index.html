@@ -7,37 +7,8 @@
     <script src="aframe.min.js"></script>
 </head>
 <body>
-    <a-scene device-orientation-permission-ui>
-        <a-entity id="compass" rotation="0 0 0"></a-entity>
-        <a-sky id="panorama" src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
-        <a-entity camera device-orientation="tiltAxis: y; minVerticalAngle: -90; maxVerticalAngle: 90;"></a-entity>
+    <a-scene>
+        <a-sky src="./Panorama_Test.jpg" rotation="0 -90 0"></a-sky>
     </a-scene>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var panorama = document.getElementById('panorama');
-            var compass = document.getElementById('compass');
-            var northDirectionOffset = 0;
-
-            // Set the rotation of the compass entity to always face north
-            window.addEventListener('deviceorientation', function(event) {
-                var compassHeading = event.webkitCompassHeading || event.alpha || 0;
-                compass.setAttribute('rotation', '0 ' + (360 - compassHeading) + ' 0');
-
-                // Calculate the initial offset between the panorama's initial rotation and the north direction
-                if (northDirectionOffset === 0) {
-                    var initialPanoramaRotation = panorama.getAttribute('rotation').y;
-                    northDirectionOffset = compassHeading - initialPanoramaRotation;
-                }
-            });
-
-            // Set the rotation of the camera to always face north based on the initial offset
-            setInterval(function() {
-                var compassHeading = (360 - compass.getAttribute('rotation').y) % 360;
-                var cameraRotation = (compassHeading - northDirectionOffset) % 360;
-                panorama.setAttribute('rotation', '0 ' + cameraRotation + ' 0');
-            }, 1000); // Update every second or as needed
-        });
-    </script>
 </body>
 </html>

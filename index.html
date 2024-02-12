@@ -37,6 +37,17 @@
                 // Calculate the offset between initial heading and true north
                 var offset = initialHeading - heading;
 
+                // Apply the offset to the camera rotation
+                var cameraEl = document.querySelector('[gps-camera]');
+                var currentCameraRotation = cameraEl.getAttribute('rotation');
+                var adjustedRotation = {
+                    x: currentCameraRotation.x,
+                    y: currentCameraRotation.y - offset, // Adjusted based on the offset
+                    z: currentCameraRotation.z
+                };
+
+                cameraEl.setAttribute('rotation', adjustedRotation);
+
                 // Apply the offset to the panorama rotation
                 panoramaEl.setAttribute('rotation', '0 ' + offset + ' 0');
             }

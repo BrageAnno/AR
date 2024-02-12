@@ -8,6 +8,7 @@
 </head>
 <body>
     <a-scene device-orientation-permission-ui>
+        <a-entity id="compass" rotation="0 0 0"></a-entity>
         <a-sky id="panorama" src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
         <a-entity camera device-orientation="tiltAxis: y; minVerticalAngle: -90; maxVerticalAngle: 90;"></a-entity>
     </a-scene>
@@ -15,12 +16,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var panorama = document.getElementById('panorama');
+            var compass = document.getElementById('compass');
+            var northDirection = 0;
 
-            // Set the rotation of the panorama to the device's compass heading
+            // Set the rotation of the compass entity to always face north
             window.addEventListener('deviceorientation', function(event) {
-                var compassHeading = event.alpha || 0;
-                panorama.setAttribute('rotation', '0 ' + compassHeading + ' 0');
+                var compassHeading = event.webkitCompassHeading || event.alpha || 0;
+                northDirection = compassHeading;
+                compass.setAttribute('rotation', '0 ' + (360 - compassHeading) + ' 0');
             });
+
+            // Set the rotation of the panorama to always face north
+            setInterval(function() {
+                panorama.setAttribute('rotation', '0 ' + northDirection + ' 0');
+            }, 100);
         });
     </script>
 </body>

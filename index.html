@@ -17,19 +17,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             var panorama = document.getElementById('panorama');
             var compass = document.getElementById('compass');
-            var northDirection = 0;
+            var northDirectionOffset = 0;
 
             // Set the rotation of the compass entity to always face north
             window.addEventListener('deviceorientation', function(event) {
                 var compassHeading = event.webkitCompassHeading || event.alpha || 0;
-                northDirection = compassHeading;
                 compass.setAttribute('rotation', '0 ' + (360 - compassHeading) + ' 0');
+
+                // Calculate the initial offset between the panorama's initial rotation and the north direction
+                if (northDirectionOffset === 0) {
+                    var initialPanoramaRotation = panorama.getAttribute('rotation').y;
+                    northDirectionOffset = compassHeading - initialPanoramaRotation;
+                }
             });
 
-            // Set the rotation of the panorama to always face north
+            // Set the rotation of the camera to always face north based on the initial offset
             setInterval(function() {
-                panorama.setAttribute('rotation', '0 ' + northDirection + ' 0');
-            }, 100);
+                var compassHeading = (360 - compass.getAttribute('rotation').y) % 360;
+                var cameraRotation = (compassHeading - northDirectionOffset) % 360;
+                panorama.setAttribute('rotation', '0 ' + cameraRotation + ' 0');
+            }, 1000); // Update every second or as needed
         });
     </script>
 </body>

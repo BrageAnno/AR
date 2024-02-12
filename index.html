@@ -9,13 +9,13 @@
 <body>
     <a-scene>
         <a-camera gps-camera rotation-reader></a-camera>
-        <a-sky src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
+        <a-sky id="panorama" src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
     </a-scene>
 
     <script>
         // Wait for the scene to load
         document.querySelector('a-scene').addEventListener('loaded', function () {
-            var panoramaEl = document.querySelector('a-sky');
+            var panoramaEl = document.getElementById('panorama');
 
             // Function to update the panorama rotation
             function updatePanoramaRotation(event) {
@@ -28,7 +28,7 @@
                     heading = 360 - event.alpha;
                 }
 
-                // Apply the heading to the panorama rotation
+                // Update panorama rotation continuously
                 panoramaEl.setAttribute('rotation', '0 ' + heading + ' 0');
             }
 

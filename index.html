@@ -16,6 +16,7 @@
         // Wait for the scene to load
         document.querySelector('a-scene').addEventListener('loaded', function () {
             var panoramaEl = document.getElementById('panorama');
+            var initialHeading;
 
             // Function to update the panorama rotation
             function updatePanoramaRotation(event) {
@@ -28,8 +29,16 @@
                     heading = 360 - event.alpha;
                 }
 
-                // Update panorama rotation continuously
-                panoramaEl.setAttribute('rotation', '0 ' + heading + ' 0');
+                if (initialHeading === undefined) {
+                    // Save initial heading on the first orientation event
+                    initialHeading = heading;
+                }
+
+                // Calculate the offset between initial heading and true north
+                var offset = initialHeading - heading;
+
+                // Apply the offset to the panorama rotation
+                panoramaEl.setAttribute('rotation', '0 ' + offset + ' 0');
             }
 
             // Listen for deviceorientation event

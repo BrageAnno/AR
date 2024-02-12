@@ -8,7 +8,30 @@
 </head>
 <body>
     <a-scene>
-        <a-sky src="./Panorama_Test.jpg" rotation="0 -90 0"></a-sky>
+        <a-camera gps-camera rotation-reader></a-camera>
+        <a-sky src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
     </a-scene>
+
+    <script>
+        // Wait for the scene to load
+        document.querySelector('a-scene').addEventListener('loaded', function () {
+            var cameraEl = document.querySelector('[gps-camera]');
+            var skyEl = document.querySelector('a-sky');
+
+            // Listen for deviceorientation event
+            window.addEventListener('deviceorientation', function (event) {
+                if (event.webkitCompassHeading) {
+                    // Use webkitCompassHeading on iOS devices
+                    var heading = event.webkitCompassHeading;
+                } else {
+                    // Calculate heading based on alpha value
+                    var heading = 360 - event.alpha;
+                }
+
+                // Apply the heading to the sky rotation
+                skyEl.setAttribute('rotation', '0 ' + heading + ' 0');
+            });
+        });
+    </script>
 </body>
 </html>

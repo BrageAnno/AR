@@ -1,2 +1,2 @@
-# AR
-AR Project - Domkirkeodden
+# AR-Marker
+AR-Marker-Test

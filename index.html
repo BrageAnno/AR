@@ -1,15 +1,121 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>AR.js A-Frame Location-based</title>
-<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js'></script>
-<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js'></script>
-</head>
-<body>
-<a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false' renderer='antialias: true; alpha: true'>
-    <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
-    <a-entity gltf-model="url:https://github.com/BrageAnno/AR/blob/main/DomkirkeoddenARTest.glb" gps-new-entity-place="latitude: <60.876303>; longitude: <11.553505>" scale="10 10 10"></a-entity>
-</a-scene>
-</body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="aframe.min.js"></script>
+    <script src="mindar-image-aframe.prod.js"></script>
+    <style>
+      /* Style for the 2D UI button */
+      #toggleButton {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 15px; /* Increase padding for a larger button */
+        font-size: 18px; /* Increase font size for better visibility */
+        cursor: pointer;
+        border: none;
+        outline: none;
+        z-index: 1000; /* Ensure the button is above the 3D models */
+        text-shadow: 2px 2px 2px black; /* Add a black shadow around the text */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Button outside the AR scene -->
+    <button id="toggleButton" style="background-color: #3498db; color: #fff;">År 1150</button>
+
+    <a-scene
+      mindar-image="filterMinCF:0.0001; filterBeta: 0.001; imageTargetSrc: ./AnnoQRTargets.mind;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
+      <a-camera position="0 0 0.1" look-controls="enabled: false" near="0.01"></a-camera> <!-- Adjust the near property -->
+
+      <a-assets>
+        <a-asset-item id="avatarModel1" src="./DomkirkeoddenARTest.glb"></a-asset-item>
+        <a-asset-item id="avatarModel2" src="./DomkirkeoddenARTESTColor2.glb"></a-asset-item>
+        <a-asset-item id="avatarModel3" src="./DomkirkeoddenARTESTColor3.glb"></a-asset-item>
+        <a-asset-item id="avatarModel4" src="./DomkirkeoddenARTESTColor4.glb"></a-asset-item>
+      </a-assets>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-entity
+          id="modelsContainer"
+          position="0 0.1 0"
+          scale="0.18 0.18 0.18"
+        ></a-entity>
+      </a-entity>
+
+      <script>
+        var modelsContainer = document.getElementById('modelsContainer');
+        var models = []; // Array to store model references
+        var currentModelIndex = 0; // Current model index
+
+        // Create models and add them to the container
+        for (var i = 1; i <= 4; i++) {
+          var model = createModel('#avatarModel' + i, '-0.5 0 0');
+          models.push(model);
+        }
+
+        function createModel(src, position) {
+          var model = document.createElement('a-gltf-model');
+          model.setAttribute('rotation', '90 0 0');
+          model.setAttribute('position', position);
+          model.setAttribute('src', src);
+          model.setAttribute('visible', false); // Initially hidden
+          modelsContainer.appendChild(model);
+          return model;
+        }
+
+        function toggleModelsVisibility() {
+          // Hide the current model
+          models[currentModelIndex].setAttribute('visible', false);
+
+          // Update the currentModelIndex for the next toggle
+          currentModelIndex = (currentModelIndex + 1) % 4;
+
+          // Show the next model in the sequence
+          models[currentModelIndex].setAttribute('visible', true);
+
+          // Update button text and color based on the current model
+          updateButtonText();
+        }
+
+        function updateButtonText() {
+          var toggleButton = document.getElementById('toggleButton');
+          switch (currentModelIndex) {
+            case 0:
+              toggleButton.textContent = 'År 1150';
+              toggleButton.style.backgroundColor = '#3498db'; // Blue color
+              break;
+            case 1:
+              toggleButton.textContent = 'År 1250';
+              toggleButton.style.backgroundColor = '#2ecc71'; // Green color
+              break;
+            case 2:
+              toggleButton.textContent = 'År 1300';
+              toggleButton.style.backgroundColor = '#e74c3c'; // Red color
+              break;
+            case 3:
+              toggleButton.textContent = 'År 1430';
+              toggleButton.style.backgroundColor = '#f39c12'; // Orange color
+              break;
+            default:
+              toggleButton.textContent = 'Toggle Models';
+              toggleButton.style.backgroundColor = '#3498db'; // Default color (matching first model)
+              break;
+          }
+        }
+
+        // Show the first model initially
+        models[currentModelIndex].setAttribute('visible', true);
+
+        // Toggle between models on button click
+        var toggleButton = document.getElementById('toggleButton');
+        toggleButton.addEventListener('click', toggleModelsVisibility);
+      </script>
+    </a-scene>
+  </body>
 </html>

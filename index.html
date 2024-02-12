@@ -15,7 +15,6 @@
     <script>
         // Wait for the scene to load
         document.querySelector('a-scene').addEventListener('loaded', function () {
-            var cameraEl = document.querySelector('[gps-camera]');
             var panoramaEl = document.getElementById('panorama');
 
             // Function to update the panorama rotation
@@ -29,11 +28,8 @@
                     heading = 360 - event.alpha;
                 }
 
-                // Update panorama rotation only on the first load
-                if (!panoramaEl.dataset.initialized) {
-                    panoramaEl.dataset.initialized = true;
-                    panoramaEl.setAttribute('rotation', '0 ' + heading + ' 0');
-                }
+                // Always update panorama rotation to face true north
+                panoramaEl.setAttribute('rotation', '0 ' + heading + ' 0');
             }
 
             // Listen for deviceorientation event

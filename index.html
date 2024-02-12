@@ -9,14 +9,13 @@
 <body>
     <a-scene>
         <a-camera gps-camera rotation-reader></a-camera>
-        <a-sky id="panorama" src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
+        <a-sky src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
     </a-scene>
 
     <script>
         // Wait for the scene to load
         document.querySelector('a-scene').addEventListener('loaded', function () {
-            var panoramaEl = document.getElementById('panorama');
-            var initialHeading;
+            var panoramaEl = document.querySelector('a-sky');
 
             // Function to update the panorama rotation
             function updatePanoramaRotation(event) {
@@ -29,27 +28,8 @@
                     heading = 360 - event.alpha;
                 }
 
-                if (initialHeading === undefined) {
-                    // Save initial heading on the first orientation event
-                    initialHeading = heading;
-                }
-
-                // Calculate the offset between initial heading and true north
-                var offset = initialHeading - heading;
-
-                // Apply the offset to the camera rotation
-                var cameraEl = document.querySelector('[gps-camera]');
-                var currentCameraRotation = cameraEl.getAttribute('rotation');
-                var adjustedRotation = {
-                    x: currentCameraRotation.x,
-                    y: currentCameraRotation.y - offset, // Adjusted based on the offset
-                    z: currentCameraRotation.z
-                };
-
-                cameraEl.setAttribute('rotation', adjustedRotation);
-
-                // Apply the offset to the panorama rotation
-                panoramaEl.setAttribute('rotation', '0 ' + offset + ' 0');
+                // Apply the heading to the panorama rotation
+                panoramaEl.setAttribute('rotation', '0 ' + heading + ' 0');
             }
 
             // Listen for deviceorientation event

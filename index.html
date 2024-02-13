@@ -1,46 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Inside Sphere Viewer</title>
-  <script src="aframe.min.js"></script> <!-- Include A-Frame library -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compass</title>
+<style>
+  #arrow {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    transition: transform 0.3s ease;
+  }
+</style>
 </head>
 <body>
-  <a-scene device-orientation-permission-ui>
-    <!-- Import your existing .glb file -->
-    <a-entity id="sphere" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
+<div id="arrow">🔴</div>
 
-    <!-- Place the camera inside the sphere -->
-    <a-entity camera position="0 0 0"></a-entity>
-  </a-scene>
+<script>
+window.addEventListener('deviceorientation', handleOrientation);
 
-  <script>
-    // Function to handle device orientation events
-    function handleOrientation(event) {
-      var alpha = event.alpha; // Compass direction in degrees
-
-      // Get the sphere entity
-      var sphere = document.getElementById('sphere');
-
-      // Get the initial compass reading from local storage
-      var initialCompassReading = parseFloat(localStorage.getItem('initialCompassReading'));
-
-      // If initial compass reading is not set, set it
-      if (isNaN(initialCompassReading)) {
-        initialCompassReading = alpha;
-        localStorage.setItem('initialCompassReading', initialCompassReading);
-      }
-
-      // Calculate the rotation difference between current compass reading and initial reading
-      var rotationDifference = initialCompassReading - alpha;
-
-      // Apply rotation difference to the sphere's y-axis to keep it oriented with the compass
-      var rotation = sphere.getAttribute('rotation');
-      rotation.y = rotationDifference; 
-      sphere.setAttribute('rotation', rotation);
-    }
-
-    // Listen for device orientation events
-    window.addEventListener('deviceorientation', handleOrientation);
-  </script>
+function handleOrientation(event) {
+  var alpha = event.alpha; // Rotation around z-axis (0 to 360)
+  if (alpha !== null) {
+    var arrow = document.getElementById('arrow');
+    arrow.style.transform = `rotate(${360 - alpha}deg)`;
+  }
+}
+</script>
 </body>
 </html>

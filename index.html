@@ -21,13 +21,10 @@
       // Get the sphere entity
       var sphere = document.getElementById('sphere');
 
-      // Initialize the rotation of the sphere if not already initialized
-      if (!sphere.hasAttribute('initialized')) {
-        var rotation = sphere.getAttribute('rotation');
-        rotation.y = 360 - alpha; // Invert the rotation
-        sphere.setAttribute('rotation', rotation);
-        sphere.setAttribute('initialized', true); // Set initialized attribute
-      }
+      // Update the rotation of the sphere to make the y-axis always face north
+      var rotation = sphere.getAttribute('rotation');
+      rotation.y = 360 - alpha; // Invert the rotation
+      sphere.setAttribute('rotation', rotation);
     }
 
     // Listen for device orientation events

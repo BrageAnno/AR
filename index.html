@@ -14,41 +14,24 @@
   </a-scene>
 
   <script>
-    // Function to adjust the rotation dynamically
-    function adjustRotation(alpha) {
+    // Function to handle device orientation events
+    function handleOrientation(event) {
+      var alpha = event.alpha; // Compass direction in degrees
+
+      // Get the sphere entity
       var sphere = document.getElementById('sphere');
-      var rotation = sphere.getAttribute('rotation');
-      rotation.y = (360 - alpha) % 360;
-      sphere.setAttribute('rotation', rotation);
+
+      // Initialize the rotation of the sphere if not already initialized
+      if (!sphere.hasAttribute('initialized')) {
+        var rotation = sphere.getAttribute('rotation');
+        rotation.y = 360 - alpha; // Invert the rotation
+        sphere.setAttribute('rotation', rotation);
+        sphere.setAttribute('initialized', true); // Set initialized attribute
+      }
     }
 
     // Listen for device orientation events
-    window.addEventListener('deviceorientation', function(event) {
-      var alpha = event.alpha; // Compass direction in degrees
-      adjustRotation(alpha);
-    });
-
-    // Calculate initial rotation when the page loads
-    window.addEventListener('load', function() {
-      if (window.DeviceOrientationEvent) {
-        // If device orientation event is supported, use it to set initial rotation
-        window.addEventListener('deviceorientation', function(event) {
-          var alpha = event.alpha; // Compass direction in degrees
-          var sphere = document.getElementById('sphere');
-          var rotation = sphere.getAttribute('rotation');
-          rotation.y = (360 - alpha) % 360;
-          sphere.setAttribute('rotation', rotation);
-          // Remove the event listener once initial rotation is set
-          window.removeEventListener('deviceorientation', arguments.callee);
-        });
-      } else {
-        // If device orientation event is not supported, fallback to a default initial rotation
-        var sphere = document.getElementById('sphere');
-        var rotation = sphere.getAttribute('rotation');
-        rotation.y = 0; // Default initial rotation (adjust as needed)
-        sphere.setAttribute('rotation', rotation);
-      }
-    });
+    window.addEventListener('deviceorientation', handleOrientation);
   </script>
 </body>
 </html>

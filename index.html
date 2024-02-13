@@ -1,90 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Compass</title>
-  <script src="aframe.min.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f0f0; /* Change the background color as needed */
-    }
-
-    .arrow {
-      position: absolute;
-      width: 0;
-      height: 0;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border-style: solid;
-      border-width: 30px 20px 0 20px;
-      border-color: red transparent transparent transparent;
-      z-index: 1;
-    }
-
-    #model {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 0;
-    }
-  </style>
+  <title>Inside Sphere Viewer</title>
+  <script src="aframe.min.js"></script> <!-- Include A-Frame library -->
 </head>
 <body>
-  <div class="arrow"></div>
-  
-  <a-scene>
-    <a-entity id="model" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
+  <a-scene device-orientation-permission-ui>
+    <!-- Import your existing .glb file -->
+    <a-entity id="sphere" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0">
+      <!-- Place the camera inside the sphere -->
+      <a-entity camera position="0 0 0"></a-entity>
+    </a-entity>
   </a-scene>
 
   <script>
-    const arrow = document.querySelector(".arrow");
-    let compass;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // Function to handle device orientation events
+    function handleOrientation(event) {
+      var alpha = event.alpha; // Compass direction in degrees
 
-    function init() {
-      startCompass();
-    }
+      // Get the sphere entity
+      var sphere = document.getElementById('sphere');
 
-    function startCompass() {
-      if (isIOS) {
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(permissionState => {
-              if (permissionState === 'granted') {
-                window.addEventListener("deviceorientation", handler, true);
-              } else {
-                alert("Permission denied!");
-              }
-            })
-            .catch(console.error);
-        } else {
-          alert("Your device does not support requesting permission.");
-        }
-      } else {
-        window.addEventListener("deviceorientationabsolute", handler, true);
+      // Get the initial compass reading from local storage
+      var initialCompassReading = parseFloat(localStorage.getItem('initialCompassReading'));
+
+      // If initial compass reading is not set, set it
+      if (isNaN(initialCompassReading)) {
+        initialCompassReading = alpha;
+        localStorage.setItem('initialCompassReading', initialCompassReading);
       }
+
+      // Calculate the rotation difference between current compass reading and initial reading
+      var rotationDifference = initialCompassReading - alpha;
+
+      // Apply rotation difference to the sphere's y-axis to keep it oriented with the compass
+      var rotation = sphere.getAttribute('rotation');
+      rotation.y = rotationDifference; 
+      sphere.setAttribute('rotation', rotation);
     }
 
-    function handler(e) {
-      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-      if (compass !== undefined && compass !== null) {
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
-      }
-    }
-
-    init();
+    // Listen for device orientation events
+    window.addEventListener('deviceorientation', handleOrientation);
   </script>
 </body>
 </html>

@@ -27,23 +27,25 @@
       z-index: 1;
     }
 
-    .compass > .compass-circle,
-    .compass > .my-point {
+    .compass > .compass-circle {
       position: absolute;
-      width: 80%;
-      height: 80%;
+      width: 100%;
+      height: 100%;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s ease-out;
+      transform: translate(-50%, -50%) rotate(0deg);
       background: url(https://cdn.onlinewebfonts.com/svg/img_467023.png) center no-repeat;
       background-size: contain;
+      transition: transform 0.5s ease;
     }
 
     .compass > .my-point {
-      opacity: 0;
+      position: absolute;
       width: 20%;
       height: 20%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: rgb(8, 223, 69);
       border-radius: 50%;
       transition: opacity 0.5s ease-out;
@@ -92,6 +94,7 @@
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translateX(-50%) rotate(${-compass}deg)`;
+        compassCircle.style.transform = `translate(-50%, -50%) rotate(${compass}deg)`;
       }
     }
 

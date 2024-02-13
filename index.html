@@ -11,17 +11,31 @@
       border-left: 10px solid transparent;
       border-right: 10px solid transparent;
       border-bottom: 20px solid red; /* Change the color to red */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) translateY(-50%);
     }
   </style>
 </head>
 <body>
   <div id="arrow"></div>
 
-  <script src="https://unpkg.com/compass.js"></script>
   <script>
-    var compass = new Compass('#arrow', {
-      direction: 0 // 0 degrees represents north
-    });
+    window.addEventListener('deviceorientation', handleOrientation);
+
+    function handleOrientation(event) {
+      var absolute = event.absolute;
+      var alpha = event.alpha;
+      var beta = event.beta;
+      var gamma = event.gamma;
+
+      var arrow = document.getElementById('arrow');
+      if (arrow) {
+        arrow.style.transform = 'rotate(' + alpha + 'deg)';
+      }
+    }
   </script>
 </body>
 </html>

@@ -5,12 +5,29 @@
   <script src="aframe.min.js"></script> <!-- Include A-Frame library -->
 </head>
 <body>
-  <a-scene>
+  <a-scene device-orientation-permission-ui>
     <!-- Import your existing .glb file -->
-    <a-entity gltf-model="./360_HDRI_Test.glb"></a-entity>
+    <a-entity id="sphere" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
 
     <!-- Place the camera inside the sphere -->
     <a-entity camera position="0 0 0"></a-entity>
   </a-scene>
+
+  <script>
+    // Listen for device orientation events
+    window.addEventListener('deviceorientation', function(event) {
+      var alpha = event.alpha; // Compass direction in degrees
+
+      // Get the sphere entity
+      var sphere = document.getElementById('sphere');
+
+      // Adjust the rotation of the sphere to make a specific point always face north
+      // Here, we assume that the Y-axis of the sphere is the axis we want to align with north
+      // You may need to adjust this based on your specific sphere's orientation
+      var rotation = sphere.getAttribute('rotation');
+      rotation.y = alpha;
+      sphere.setAttribute('rotation', rotation);
+    });
+  </script>
 </body>
 </html>

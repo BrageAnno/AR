@@ -24,24 +24,8 @@
       // Adjust the rotation of the sphere to make a specific point always face north
       // Here, we assume that the Y-axis of the sphere is the axis we want to align with north
       // You may need to adjust this based on your specific sphere's orientation
-      
-      // Initialize rotation
-      var rotation = { x: 0, y: 0, z: 0 };
-
-      // Check if the device is inverted
-      var inverted = false;
-      if (alpha > 180) {
-        inverted = true;
-        alpha -= 180;
-      }
-
-      // Adjust the rotation
-      rotation.y = inverted ? alpha : alpha + 180;
-      
-      // Ensure the rotation value is within the range of 0 to 360 degrees
-      rotation.y %= 360;
-      
-      // Set the new rotation value
+      var rotation = sphere.getAttribute('rotation');
+      rotation.y = 360 - alpha; // Invert the rotation
       sphere.setAttribute('rotation', rotation);
     });
   </script>

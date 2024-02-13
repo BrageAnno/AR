@@ -14,6 +14,7 @@
       justify-content: center;
       height: 100vh;
       background-color: #f0f0f0; /* Change the background color as needed */
+      overflow: hidden;
     }
 
     .arrow {
@@ -43,8 +44,9 @@
 <body>
   <div class="arrow"></div>
   
-  <a-scene>
+  <a-scene embedded vr-mode-ui="enabled: false">
     <a-entity id="model" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
+    <a-camera rotation="0 180 0"></a-camera>
   </a-scene>
 
   <script>

@@ -14,18 +14,21 @@
   </a-scene>
 
   <script>
-    var initialCompassReading = null; // Variable to store the initial compass reading
-
     // Function to handle device orientation events
     function handleOrientation(event) {
-      if (initialCompassReading === null) {
-        initialCompassReading = event.alpha; // Set initial compass reading if not already set
-      }
-
       var alpha = event.alpha; // Compass direction in degrees
 
       // Get the sphere entity
       var sphere = document.getElementById('sphere');
+
+      // Get the initial compass reading from local storage
+      var initialCompassReading = parseFloat(localStorage.getItem('initialCompassReading'));
+
+      // If initial compass reading is not set, set it
+      if (isNaN(initialCompassReading)) {
+        initialCompassReading = alpha;
+        localStorage.setItem('initialCompassReading', initialCompassReading);
+      }
 
       // Calculate the rotation difference between current compass reading and initial reading
       var rotationDifference = initialCompassReading - alpha;

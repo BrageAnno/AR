@@ -14,16 +14,25 @@
   </a-scene>
 
   <script>
+    var initialCompassReading = null; // Variable to store the initial compass reading
+
     // Function to handle device orientation events
     function handleOrientation(event) {
+      if (initialCompassReading === null) {
+        initialCompassReading = event.alpha; // Set initial compass reading if not already set
+      }
+
       var alpha = event.alpha; // Compass direction in degrees
 
       // Get the sphere entity
       var sphere = document.getElementById('sphere');
 
-      // Update the rotation of the sphere to make the y-axis always face north
+      // Calculate the rotation difference between current compass reading and initial reading
+      var rotationDifference = initialCompassReading - alpha;
+
+      // Apply rotation difference to the sphere's y-axis to keep it oriented with the compass
       var rotation = sphere.getAttribute('rotation');
-      rotation.y = 360 - alpha; // Invert the rotation
+      rotation.y = rotationDifference; 
       sphere.setAttribute('rotation', rotation);
     }
 

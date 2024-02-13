@@ -1,49 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panorama 360 Viewer</title>
-    <script src="aframe.min.js"></script>
+  <title>Inside Sphere Viewer</title>
+  <script src="aframe.min.js"></script> <!-- Include A-Frame library -->
 </head>
 <body>
-    <a-scene>
-        <a-camera gps-camera rotation-reader></a-camera>
-        <a-sky id="panorama" src="./Panorama_Test.jpg" rotation="0 0 0"></a-sky>
-    </a-scene>
+  <a-scene>
+    <!-- Import your existing .glb file -->
+    <a-entity gltf-model="./360_HDRI_Test.glb"></a-entity>
 
-    <script>
-        // Wait for the scene to load
-        document.querySelector('a-scene').addEventListener('loaded', function () {
-            var panoramaEl = document.getElementById('panorama');
-            var initialHeading;
-
-            // Function to update the panorama rotation
-            function updatePanoramaRotation(event) {
-                var heading;
-                if (event.webkitCompassHeading) {
-                    // Use webkitCompassHeading on iOS devices
-                    heading = event.webkitCompassHeading;
-                } else {
-                    // Calculate heading based on alpha value
-                    heading = 360 - event.alpha;
-                }
-
-                if (initialHeading === undefined) {
-                    // Save initial heading on the first orientation event
-                    initialHeading = heading;
-                }
-
-                // Calculate the difference between initial heading and current heading
-                var rotationDifference = heading - initialHeading;
-
-                // Apply the difference to the panorama rotation
-                panoramaEl.setAttribute('rotation', '0 ' + rotationDifference + ' 0');
-            }
-
-            // Listen for deviceorientation event
-            window.addEventListener('deviceorientation', updatePanoramaRotation);
-        });
-    </script>
+    <!-- Place the camera inside the sphere -->
+    <a-entity camera position="0 0 0"></a-entity>
+  </a-scene>
 </body>
 </html>

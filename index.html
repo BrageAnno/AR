@@ -1,50 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compass</title>
-<style>
-  #arrow {
-    width: 100px;
-    height: 100px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -50px;
-    margin-left: -50px;
-    transition: transform 0.3s ease;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Red Arrow Facing North</title>
+  <style>
+    #arrow {
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 20px solid red; /* Change the color to red */
+    }
+  </style>
 </head>
 <body>
-<svg id="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <path fill="red" d="M12 2L1 21h10.5l-2.1 9 9-9H13.5z"/>
-</svg>
+  <div id="arrow"></div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission()
-      .then(permissionState => {
-        if (permissionState === 'granted') {
-          window.addEventListener('deviceorientation', handleOrientation);
-        }
-      })
-      .catch(console.error);
-  } else {
-    // For devices that don't support permissions API (older browsers)
-    window.addEventListener('deviceorientation', handleOrientation);
-  }
-});
-
-function handleOrientation(event) {
-  var alpha = event.alpha; // Rotation around z-axis (0 to 360)
-  if (alpha !== null) {
-    var arrow = document.getElementById('arrow');
-    arrow.style.transform = `rotate(${360 - alpha}deg)`;
-  }
-}
-</script>
+  <script src="https://unpkg.com/compass.js"></script>
+  <script>
+    var compass = new Compass('#arrow', {
+      direction: 0 // 0 degrees represents north
+    });
+  </script>
 </body>
 </html>

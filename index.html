@@ -23,7 +23,20 @@
 </svg>
 
 <script>
-window.addEventListener('deviceorientationabsolute', handleOrientation);
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === 'granted') {
+          window.addEventListener('deviceorientation', handleOrientation);
+        }
+      })
+      .catch(console.error);
+  } else {
+    // For devices that don't support permissions API (older browsers)
+    window.addEventListener('deviceorientation', handleOrientation);
+  }
+});
 
 function handleOrientation(event) {
   var alpha = event.alpha; // Rotation around z-axis (0 to 360)

@@ -40,6 +40,7 @@
     }
 
     a-scene {
+      display: none; /* Initially hide the scene */
       position: fixed;
       width: 100%;
       height: 100%;
@@ -48,15 +49,14 @@
 </head>
 <body>
   <div class="arrow"></div>
-  
-  <a-scene style="display: none;">
+
+  <a-scene id="ar-scene">
     <a-entity id="camera" camera position="0 0 0" rotation="0 0 0"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
   <script>
     const arrow = document.querySelector(".arrow");
-    const scene = document.querySelector("a-scene");
     let compass;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -70,8 +70,7 @@
           DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
               if (permissionState === 'granted') {
-                loadScene();
-                window.addEventListener("deviceorientation", handler, true);
+                setupARScene(); // Permission granted, setup AR scene
               } else {
                 alert("Permission denied!");
               }
@@ -81,7 +80,16 @@
           alert("Your device does not support requesting permission.");
         }
       } else {
-        loadScene();
+        setupARScene(); // For non-iOS devices, directly setup AR scene
+      }
+    }
+
+    function setupARScene() {
+      const arScene = document.getElementById("ar-scene");
+      arScene.style.display = "block"; // Display the AR scene
+      if (isIOS) {
+        window.addEventListener("deviceorientation", handler, true);
+      } else {
         window.addEventListener("deviceorientationabsolute", handler, true);
       }
     }
@@ -92,10 +100,6 @@
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
-    }
-
-    function loadScene() {
-      scene.style.display = "block";
     }
 
     init();

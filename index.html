@@ -56,17 +56,15 @@
     <div class="compass-circle"></div>
     <div class="my-point"></div>
   </div>
-  <button class="start-btn">Start compass</button>
 
   <script>
     const compassCircle = document.querySelector(".compass-circle");
-    const startBtn = document.querySelector(".start-btn");
     const myPoint = document.querySelector(".my-point");
     let compass;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function init() {
-      startBtn.addEventListener("click", startCompass);
+      startCompass();
     }
 
     function startCompass() {

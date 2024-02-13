@@ -63,10 +63,7 @@
     const startBtn = document.querySelector(".start-btn");
     const myPoint = document.querySelector(".my-point");
     let compass;
-    const isIOS = !(
-      navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
-      navigator.userAgent.match(/AppleWebKit/)
-    );
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function init() {
       startBtn.addEventListener("click", startCompass);
@@ -74,15 +71,19 @@
 
     function startCompass() {
       if (isIOS) {
-        DeviceOrientationEvent.requestPermission()
-          .then((response) => {
-            if (response === "granted") {
-              window.addEventListener("deviceorientation", handler, true);
-            } else {
-              alert("has to be allowed!");
-            }
-          })
-          .catch(() => alert("not supported"));
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+              if (permissionState === 'granted') {
+                window.addEventListener("deviceorientation", handler, true);
+              } else {
+                alert("Permission denied!");
+              }
+            })
+            .catch(console.error);
+        } else {
+          alert("Your device does not support requesting permission.");
+        }
       } else {
         window.addEventListener("deviceorientationabsolute", handler, true);
       }

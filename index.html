@@ -25,6 +25,7 @@
       border-width: 30px 20px 0 20px;
       border-color: red transparent transparent transparent;
       z-index: 1;
+      transition: transform 0.5s ease;
     }
 
     .compass > .compass-circle,
@@ -59,6 +60,7 @@
 
   <script>
     const compassCircle = document.querySelector(".compass-circle");
+    const arrow = document.querySelector(".arrow");
     const myPoint = document.querySelector(".my-point");
     let compass;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -89,7 +91,7 @@
 
     function handler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-      compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+      arrow.style.transform = `translateX(-50%) rotate(${-compass}deg)`;
     }
 
     init();

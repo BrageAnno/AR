@@ -2,73 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Compass</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f0f0; /* Change the background color as needed */
-    }
-
-    .arrow {
-      position: absolute;
-      width: 0;
-      height: 0;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border-style: solid;
-      border-width: 30px 20px 0 20px;
-      border-color: red transparent transparent transparent;
-      z-index: 1;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>360 HDRI Test</title>
+  <script src="aframe.min.js"></script>
 </head>
 <body>
-  <div class="arrow"></div>
+  <a-scene background="color: #ECECEC">
+    <!-- 360 HDRI Sphere -->
+    <a-sky id="hdri-sphere" src="./360_HDRI_Test.glb" rotation="0 -90 0"></a-sky>
+
+    <!-- Camera -->
+    <a-entity id="camera" camera look-controls position="0 0 0"></a-entity>
+  </a-scene>
 
   <script>
-    const arrow = document.querySelector(".arrow");
+    const hdriSphere = document.querySelector("#hdri-sphere");
+    const camera = document.querySelector("#camera");
     let compass;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-    function init() {
-      startCompass();
-    }
 
     function startCompass() {
-      if (isIOS) {
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(permissionState => {
-              if (permissionState === 'granted') {
-                window.addEventListener("deviceorientation", handler, true);
-              } else {
-                alert("Permission denied!");
-              }
-            })
-            .catch(console.error);
-        } else {
-          alert("Your device does not support requesting permission.");
-        }
-      } else {
-        window.addEventListener("deviceorientationabsolute", handler, true);
-      }
+      window.addEventListener("deviceorientation", handler, true);
     }
 
     function handler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+        hdriSphere.setAttribute("rotation", `0 ${compass - 90} 0`);
+        camera.setAttribute("rotation", `0 ${compass} 0`);
       }
     }
 
-    init();
+    startCompass();
   </script>
 </body>
 </html>

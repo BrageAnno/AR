@@ -23,7 +23,7 @@
 </svg>
 
 <script>
-window.addEventListener('deviceorientation', handleOrientation);
+window.addEventListener('deviceorientationabsolute', handleOrientation);
 
 function handleOrientation(event) {
   var alpha = event.alpha; // Rotation around z-axis (0 to 360)

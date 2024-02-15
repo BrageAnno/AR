@@ -58,21 +58,21 @@
       cursor: pointer;
     }
 
-    @media (orientation: landscape) {
-      body {
-        transform: rotate(90deg);
-        transform-origin: center;
-        width: 100vh;
-        height: 100vw;
-        overflow-x: hidden;
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
     }
   </style>
 </head>
 <body>
+  <div class="popup" id="orientationPopup">Turn on portrait orientation lock on your device for the best experience</div>
   <div class="arrow"></div>
   
   <a-scene>
@@ -87,6 +87,7 @@
     let compass;
     let compassActive = false;
     let lookControlsActive = false;
+    let orientationLockActive = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -125,6 +126,15 @@
           lookControlsActive = true;
         }
       }
+
+      // Check for orientation lock
+      if (screen.orientation && screen.orientation.type.includes("portrait")) {
+        orientationLockActive = true;
+        document.getElementById('orientationPopup').style.display = 'none';
+      } else {
+        orientationLockActive = false;
+        document.getElementById('orientationPopup').style.display = 'block';
+      }
     }
 
     function stopCompass() {
@@ -137,12 +147,7 @@
     }
 
     function compassHandler(e) {
-      let compass;
-      if (window.matchMedia("(orientation: landscape)").matches) {
-        compass = e.webkitCompassHeading || (360 - e.alpha) % 360;
-      } else {
-        compass = e.webkitCompassHeading || e.alpha;
-      }
+      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);

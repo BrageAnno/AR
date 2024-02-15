@@ -67,7 +67,7 @@
     <a-entity id="model" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
-  <button class="button" onclick="toggleCompass()">Toggle Compass</button>
+  <button class="button" onclick="toggleCompass()">Compass is Off</button>
 
   <script>
     const arrow = document.querySelector(".arrow");
@@ -79,8 +79,10 @@
     function toggleCompass() {
       if (compassActive) {
         stopCompass();
+        document.querySelector(".button").textContent = "Compass is Off";
       } else {
         startCompass();
+        document.querySelector(".button").textContent = "Compass is On";
       }
     }
 

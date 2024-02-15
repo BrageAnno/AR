@@ -57,6 +57,19 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    @media (orientation: landscape) {
+      body {
+        transform: rotate(90deg);
+        transform-origin: center;
+        width: 100vh;
+        height: 100vw;
+        overflow-x: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -124,16 +137,17 @@
     }
 
     function compassHandler(e) {
-      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      let compass;
+      if (window.matchMedia("(orientation: landscape)").matches) {
+        compass = e.webkitCompassHeading || (360 - e.alpha) % 360;
+      } else {
+        compass = e.webkitCompassHeading || e.alpha;
+      }
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
     }
-
-    // Locking the orientation to portrait
-    screen.orientation.lock("portrait");
-
   </script>
 </body>
 </html>

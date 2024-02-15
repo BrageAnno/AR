@@ -37,14 +37,12 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 0;
-      display: none; /* Initially hide the model */
     }
 
     a-scene {
       position: fixed;
       width: 100%;
       height: 100%;
-      display: none; /* Initially hide the AR scene */
     }
   </style>
 </head>
@@ -62,29 +60,29 @@
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function init() {
-      if (isIOS && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-          .then(permissionState => {
-            if (permissionState === 'granted') {
-              startCompass();
-            } else {
-              alert("Permission denied!");
-            }
-          })
-          .catch(console.error);
-      } else {
-        startCompass();
-      }
+      startCompass();
     }
 
     function startCompass() {
-      const scene = document.querySelector("a-scene");
-      const model = document.querySelector("#model");
-
-      scene.style.display = "block"; // Show the AR scene
-      model.style.display = "block"; // Show the model
-
-      window.addEventListener(isIOS ? "deviceorientation" : "deviceorientationabsolute", handler, true);
+      if (isIOS) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+              if (permissionState === 'granted') {
+                window.addEventListener("deviceorientation", handler, true);
+                // Add a delay before refreshing the page to ensure permissions take effect
+                setTimeout(() => location.reload(), 1000);
+              } else {
+                alert("Permission denied!");
+              }
+            })
+            .catch(console.error);
+        } else {
+          alert("Your device does not support requesting permission.");
+        }
+      } else {
+        window.addEventListener("deviceorientationabsolute", handler, true);
+      }
     }
 
     function handler(e) {

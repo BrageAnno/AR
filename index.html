@@ -58,48 +58,41 @@
 
   <script>
     const arrow = document.querySelector(".arrow");
-    const model = document.querySelector("#model");
-    const scene = document.querySelector("a-scene");
     let compass;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function init() {
-      startCompass();
+      if (isIOS && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              startCompass();
+            } else {
+              alert("Permission denied!");
+            }
+          })
+          .catch(console.error);
+      } else {
+        startCompass();
+      }
     }
 
     function startCompass() {
-      if (isIOS) {
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(permissionState => {
-              if (permissionState === 'granted') {
-                showAR();
-                window.addEventListener("deviceorientation", handler, true);
-              } else {
-                alert("Permission denied!");
-              }
-            })
-            .catch(console.error);
-        } else {
-          alert("Your device does not support requesting permission.");
-        }
-      } else {
-        showAR();
-        window.addEventListener("deviceorientationabsolute", handler, true);
-      }
+      const scene = document.querySelector("a-scene");
+      const model = document.querySelector("#model");
+
+      scene.style.display = "block"; // Show the AR scene
+      model.style.display = "block"; // Show the model
+
+      window.addEventListener(isIOS ? "deviceorientation" : "deviceorientationabsolute", handler, true);
     }
 
     function handler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-        model.setAttribute("rotation", `0 ${compass} 0`);
+        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
-    }
-
-    function showAR() {
-      scene.style.display = "block"; // Show the AR scene
-      model.style.display = "block"; // Show the model
     }
 
     init();

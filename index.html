@@ -9,11 +9,9 @@
     body {
       margin: 0;
       padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       height: 100vh;
       background-color: #f0f0f0; /* Change the background color as needed */
+      position: relative; /* Make the body a positioned parent for absolute positioning */
     }
 
     .arrow {
@@ -59,7 +57,7 @@
     }
 
     .popup {
-      position: fixed;
+      position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -68,6 +66,10 @@
       padding: 20px;
       border-radius: 10px;
       display: none;
+      font-size: 16px;
+      max-width: 80%;
+      text-align: center;
+      z-index: 2; /* Ensure popup is above other elements */
     }
   </style>
 </head>

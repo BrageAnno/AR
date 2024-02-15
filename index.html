@@ -80,6 +80,8 @@
   <script>
     const arrow = document.querySelector(".arrow");
     let compass;
+    let smoothedCompass = null;
+    const smoothingFactor = 0.9; // Adjust this value to control the smoothing level
     let compassActive = false;
     let lookControlsActive = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -137,9 +139,17 @@
 
     function compassHandler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      
       if (compass !== undefined && compass !== null) {
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
+        // Apply the low-pass filter
+        if (smoothedCompass === null) {
+          smoothedCompass = compass;
+        } else {
+          smoothedCompass = smoothedCompass * smoothingFactor + compass * (1 - smoothingFactor);
+        }
+        
+        arrow.style.transform = `translate(-50%, -50%) rotate(${-smoothedCompass}deg)`;
+        document.querySelector("#model").setAttribute("rotation", `0 ${smoothedCompass} 0`);
       }
     }
   </script>

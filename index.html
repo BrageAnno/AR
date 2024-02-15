@@ -57,8 +57,8 @@
   <script>
     const arrow = document.querySelector(".arrow");
     let compass;
+    let orientationListener;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    let hasRefreshed = false;
 
     function init() {
       startCompass();
@@ -70,11 +70,7 @@
           DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
               if (permissionState === 'granted') {
-                window.addEventListener("deviceorientation", handler, true);
-                if (!hasRefreshed) {
-                  setTimeout(() => location.reload(), 1000);
-                  hasRefreshed = true;
-                }
+                orientationListener = window.addEventListener("deviceorientation", handler, true);
               } else {
                 alert("Permission denied!");
               }

@@ -95,7 +95,6 @@
                 window.addEventListener("deviceorientation", compassHandler, true);
                 compassActive = true;
                 if (!lookControlsActive) {
-                  document.querySelector("#camera").setAttribute("look-controls", "");
                   lookControlsActive = true;
                 }
               } else {
@@ -110,7 +109,6 @@
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
         compassActive = true;
         if (!lookControlsActive) {
-          document.querySelector("#camera").setAttribute("look-controls", "");
           lookControlsActive = true;
         }
       }
@@ -121,7 +119,6 @@
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
       compassActive = false;
       if (lookControlsActive) {
-        document.querySelector("#camera").removeAttribute("look-controls");
         lookControlsActive = false;
       }
     }

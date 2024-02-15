@@ -148,9 +148,11 @@
       smoothedCompass = smoothedCompass * smoothingFactor + compass * (1 - smoothingFactor);
     }
     
-    arrow.style.transform = `translate(-50%, -50%) rotate(${-smoothedCompass}deg)`;
-    const modelRotation = -smoothedCompass + 180; // Adjust the model rotation to counter the spin
-    document.querySelector("#model").setAttribute("rotation", `0 ${modelRotation} 0`);
+    // Adjust the rotation to prevent flipping
+    const adjustedCompass = smoothedCompass < 180 ? smoothedCompass : smoothedCompass - 360;
+    
+    arrow.style.transform = `translate(-50%, -50%) rotate(${-adjustedCompass}deg)`;
+    document.querySelector("#model").setAttribute("rotation", `0 ${-adjustedCompass} 0`);
   }
 }
   </script>

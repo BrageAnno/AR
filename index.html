@@ -2,19 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compass</title>
   <script src="aframe.min.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f0f0; /* Change the background color as needed */
       overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0; /* Change the background color as needed */
     }
 
     .arrow {
@@ -41,11 +43,10 @@
     }
 
     a-scene {
-      position: fixed;
-      width: 100vh; /* Set width to match height for portrait orientation */
-      height: 100vw; /* Set height to match width for portrait orientation */
-      transform: rotate(90deg) translateX(50%); /* Rotate scene 90 degrees clockwise */
-      transform-origin: left top; /* Set rotation origin to top left corner */
+      width: 100vh;
+      height: 100vw;
+      transform-origin: top left;
+      transform: rotate(90deg) translateX(100%);
     }
 
     .button {

@@ -57,6 +57,14 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    .button.green {
+      background-color: green;
+    }
+
+    .button.red {
+      background-color: red;
+    }
   </style>
 </head>
 <body>
@@ -67,7 +75,7 @@
     <a-entity id="model" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
-  <button class="button" onclick="toggleCompass()">Compass is Off</button>
+  <button class="button red" onclick="toggleCompass()">Compass is Off</button>
 
   <script>
     const arrow = document.querySelector(".arrow");
@@ -79,9 +87,13 @@
     function toggleCompass() {
       if (compassActive) {
         stopCompass();
+        document.querySelector(".button").classList.remove("green");
+        document.querySelector(".button").classList.add("red");
         document.querySelector(".button").textContent = "Compass is Off";
       } else {
         startCompass();
+        document.querySelector(".button").classList.remove("red");
+        document.querySelector(".button").classList.add("green");
         document.querySelector(".button").textContent = "Compass is On";
       }
     }

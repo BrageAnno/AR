@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Compass</title>
   <script src="aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aframe-gui/aframe-gui.min.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       height: 100vh;
       background-color: #f0f0f0; /* Change the background color as needed */
-      position: relative; /* Make the body a positioned parent for absolute positioning */
     }
 
     .arrow {
@@ -56,35 +57,14 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
-    .popup {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      display: none;
-      font-size: 16px;
-      max-width: 80%;
-      text-align: center;
-      z-index: 2; /* Ensure popup is above other elements */
-    }
   </style>
 </head>
 <body>
+  <div class="arrow"></div>
+  
   <a-scene>
     <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 0 0"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
-    <a-gui-button 
-      id="orientationPopup" 
-      value="Turn on portrait orientation lock on your device for the best experience" 
-      width="3.5" 
-      height="0.5" 
-      position="0 0 -1"
-      visible="false"></a-gui-button>
   </a-scene>
 
   <button class="button" onclick="toggleCompass()">Compass is Off</button>
@@ -94,7 +74,6 @@
     let compass;
     let compassActive = false;
     let lookControlsActive = false;
-    let orientationLockActive = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -132,15 +111,6 @@
         if (!lookControlsActive) {
           lookControlsActive = true;
         }
-      }
-
-      // Check for orientation lock
-      if (screen.orientation && screen.orientation.type.includes("portrait")) {
-        orientationLockActive = true;
-        document.getElementById('orientationPopup').setAttribute('visible', 'false');
-      } else {
-        orientationLockActive = false;
-        document.getElementById('orientationPopup').setAttribute('visible', 'true');
       }
     }
 

@@ -138,20 +138,21 @@
     }
 
     function compassHandler(e) {
-      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-      
-      if (compass !== undefined && compass !== null) {
-        // Apply the low-pass filter
-        if (smoothedCompass === null) {
-          smoothedCompass = compass;
-        } else {
-          smoothedCompass = smoothedCompass * smoothingFactor + compass * (1 - smoothingFactor);
-        }
-        
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-smoothedCompass}deg)`;
-        document.querySelector("#model").setAttribute("rotation", `0 ${smoothedCompass} 0`);
-      }
+  compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+  
+  if (compass !== undefined && compass !== null) {
+    // Apply the low-pass filter
+    if (smoothedCompass === null) {
+      smoothedCompass = compass;
+    } else {
+      smoothedCompass = smoothedCompass * smoothingFactor + compass * (1 - smoothingFactor);
     }
+    
+    arrow.style.transform = `translate(-50%, -50%) rotate(${-smoothedCompass}deg)`;
+    const modelRotation = -smoothedCompass + 180; // Adjust the model rotation to counter the spin
+    document.querySelector("#model").setAttribute("rotation", `0 ${modelRotation} 0`);
+  }
+}
   </script>
 </body>
 </html>

@@ -37,12 +37,14 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 0;
+      display: none; /* Initially hide the model */
     }
 
     a-scene {
       position: fixed;
       width: 100%;
       height: 100%;
+      display: none; /* Initially hide the AR scene */
     }
   </style>
 </head>
@@ -56,6 +58,8 @@
 
   <script>
     const arrow = document.querySelector(".arrow");
+    const model = document.querySelector("#model");
+    const scene = document.querySelector("a-scene");
     let compass;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -69,6 +73,7 @@
           DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
               if (permissionState === 'granted') {
+                showAR();
                 window.addEventListener("deviceorientation", handler, true);
               } else {
                 alert("Permission denied!");
@@ -79,6 +84,7 @@
           alert("Your device does not support requesting permission.");
         }
       } else {
+        showAR();
         window.addEventListener("deviceorientationabsolute", handler, true);
       }
     }
@@ -87,8 +93,13 @@
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
+        model.setAttribute("rotation", `0 ${compass} 0`);
       }
+    }
+
+    function showAR() {
+      scene.style.display = "block"; // Show the AR scene
+      model.style.display = "block"; // Show the model
     }
 
     init();

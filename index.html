@@ -63,19 +63,25 @@
   <div class="arrow"></div>
   
   <a-scene>
-    <a-entity id="camera" camera look-controls position="0 0 0"></a-entity>
+    <a-entity id="camera" camera position="0 0 0"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
-  <button class="button" onclick="initCompass()">Activate Compass</button>
+  <button class="button" onclick="toggleCompass()">Toggle Compass</button>
 
   <script>
     const arrow = document.querySelector(".arrow");
     let compass;
+    let compassActive = false;
+    let lookControlsActive = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-    function initCompass() {
-      startCompass();
+    function toggleCompass() {
+      if (compassActive) {
+        stopCompass();
+      } else {
+        startCompass();
+      }
     }
 
     function startCompass() {
@@ -84,7 +90,12 @@
           DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
               if (permissionState === 'granted') {
-                window.addEventListener("deviceorientation", handler, true);
+                window.addEventListener("deviceorientation", compassHandler, true);
+                compassActive = true;
+                if (!lookControlsActive) {
+                  document.querySelector("#camera").setAttribute("look-controls", "");
+                  lookControlsActive = true;
+                }
               } else {
                 alert("Permission denied!");
               }
@@ -94,11 +105,26 @@
           alert("Your device does not support requesting permission.");
         }
       } else {
-        window.addEventListener("deviceorientationabsolute", handler, true);
+        window.addEventListener("deviceorientationabsolute", compassHandler, true);
+        compassActive = true;
+        if (!lookControlsActive) {
+          document.querySelector("#camera").setAttribute("look-controls", "");
+          lookControlsActive = true;
+        }
       }
     }
 
-    function handler(e) {
+    function stopCompass() {
+      window.removeEventListener("deviceorientation", compassHandler, true);
+      window.removeEventListener("deviceorientationabsolute", compassHandler, true);
+      compassActive = false;
+      if (lookControlsActive) {
+        document.querySelector("#camera").removeAttribute("look-controls");
+        lookControlsActive = false;
+      }
+    }
+
+    function compassHandler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;

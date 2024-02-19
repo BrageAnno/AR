@@ -80,7 +80,7 @@
   <script>
     const arrow = document.querySelector(".arrow");
     let compassActive = false;
-    let compassData = {alpha: 0, beta: 0, gamma: 0}; // Initialize with dummy data
+    let compassData = null;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -126,17 +126,19 @@
     }
 
     function handleOrientation(event) {
-      compassData = {
-        alpha: event.alpha || 0,
-        beta: event.beta || 0,
-        gamma: event.gamma || 0
-      };
+      compassData = event;
       rotateArrow();
     }
 
     function rotateArrow() {
-      let { alpha, beta, gamma } = compassData;
-      let arrowRotation = gamma;
+      if (!compassData) return;
+      
+      let arrowRotation = compassData.gamma;
+      
+      // Limit the rotation of the arrow when looking up to prevent flipping
+      arrowRotation = Math.min(arrowRotation, 45); // Limit to 45 degrees up
+      arrowRotation = Math.max(arrowRotation, -45); // Limit to 45 degrees down
+      
       arrow.style.transform = `translate(-50%, -50%) rotate(${arrowRotation}deg)`;
       document.querySelector("#model").setAttribute("rotation", `0 ${-arrowRotation} 0`);
     }

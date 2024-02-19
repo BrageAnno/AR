@@ -79,8 +79,9 @@
 
   <script>
     const arrow = document.querySelector(".arrow");
+    let compass;
     let compassActive = false;
-    let compassData = null;
+    let lookControlsActive = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -103,8 +104,11 @@
           DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
               if (permissionState === 'granted') {
-                window.addEventListener("deviceorientation", handleOrientation, true);
+                window.addEventListener("deviceorientation", compassHandler, true);
                 compassActive = true;
+                if (!lookControlsActive) {
+                  lookControlsActive = true;
+                }
               } else {
                 alert("Permission denied!");
               }
@@ -114,34 +118,34 @@
           alert("Your device does not support requesting permission.");
         }
       } else {
-        window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+        window.addEventListener("deviceorientationabsolute", compassHandler, true);
         compassActive = true;
+        if (!lookControlsActive) {
+          lookControlsActive = true;
+        }
       }
     }
 
     function stopCompass() {
-      window.removeEventListener("deviceorientation", handleOrientation, true);
-      window.removeEventListener("deviceorientationabsolute", handleOrientation, true);
+      window.removeEventListener("deviceorientation", compassHandler, true);
+      window.removeEventListener("deviceorientationabsolute", compassHandler, true);
       compassActive = false;
-    }
-
-    function handleOrientation(event) {
-      compassData = event;
-      rotateArrow();
-    }
-
-    function rotateArrow() {
-      if (!compassData) return;
-      
-      let arrowRotation = compassData.alpha;
-      
-      // Adjust arrow rotation to prevent flipping when looking up
-      if (compassData.beta > 80 && compassData.beta < 100) {
-        arrowRotation -= 180; // Rotate arrow 180 degrees if looking up
+      if (lookControlsActive) {
+        lookControlsActive = false;
       }
-      
-      arrow.style.transform = `translate(-50%, -50%) rotate(${-arrowRotation}deg)`;
-      document.querySelector("#model").setAttribute("rotation", `0 ${arrowRotation} 0`);
+    }
+
+    function compassHandler(e) {
+      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      if (compass !== undefined && compass !== null) {
+        let adjustedRotation = compass;
+        // Adjusting rotation to prevent flipping when looking up
+        if (e.beta > 90 && e.beta < 180) {
+          adjustedRotation += 180;
+        }
+        arrow.style.transform = `translate(-50%, -50%) rotate(${-adjustedRotation}deg)`;
+        document.querySelector("#model").setAttribute("rotation", `0 ${adjustedRotation} 0`);
+      }
     }
   </script>
 </body>

@@ -138,23 +138,27 @@
     }
 
     function compassHandler(e) {
-  compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-  if (compass !== undefined && compass !== null) {
-    compassReadings.push(compass);
-    if (compassReadings.length > numReadings) {
-      compassReadings.shift(); // Remove oldest reading
+      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      if (compass !== undefined && compass !== null) {
+        compassReadings.push(compass);
+        if (compassReadings.length > numReadings) {
+          compassReadings.shift(); // Remove oldest reading
+        }
+        const filteredHeading = lowPassFilter(compassReadings);
+        arrow.style.transform = `translate(-50%, -50%) rotate(${-filteredHeading}deg)`;
+        document.querySelector("#model").setAttribute("rotation", `0 ${filteredHeading} 0`);
+      }
     }
-    const averageHeading = compassReadings.reduce((acc, val) => acc + val, 0) / compassReadings.length;
-    let rotation = -averageHeading;
-    if (rotation > 180) {
-      rotation -= 360;
-    } else if (rotation < -180) {
-      rotation += 360;
+
+    // Simple low-pass filter implementation
+    function lowPassFilter(data) {
+      const alpha = 0.2; // Adjust the alpha value based on filtering strength (0 < alpha < 1)
+      let filteredValue = data[0];
+      for (let i = 1; i < data.length; i++) {
+        filteredValue = alpha * data[i] + (1 - alpha) * filteredValue;
+      }
+      return filteredValue;
     }
-    arrow.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-    document.querySelector("#model").setAttribute("rotation", `0 ${-rotation} 0`);
-  }
-}
   </script>
 </body>
 </html>

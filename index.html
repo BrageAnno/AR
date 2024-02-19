@@ -133,14 +133,15 @@
     function rotateArrow() {
       if (!compassData) return;
       
-      let arrowRotation = compassData.gamma;
+      let arrowRotation = compassData.alpha;
       
-      // Limit the rotation of the arrow when looking up to prevent flipping
-      arrowRotation = Math.min(arrowRotation, 45); // Limit to 45 degrees up
-      arrowRotation = Math.max(arrowRotation, -45); // Limit to 45 degrees down
+      // Adjust arrow rotation to prevent flipping when looking up
+      if (compassData.beta > 80 && compassData.beta < 100) {
+        arrowRotation -= 180; // Rotate arrow 180 degrees if looking up
+      }
       
-      arrow.style.transform = `translate(-50%, -50%) rotate(${arrowRotation}deg)`;
-      document.querySelector("#model").setAttribute("rotation", `0 ${-arrowRotation} 0`);
+      arrow.style.transform = `translate(-50%, -50%) rotate(${-arrowRotation}deg)`;
+      document.querySelector("#model").setAttribute("rotation", `0 ${arrowRotation} 0`);
     }
   </script>
 </body>

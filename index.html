@@ -137,7 +137,7 @@
 
     function compassHandler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-      if (compass !== undefined && compass !== null) {
+      if (compass !== undefined && compass !== null && compassActive) {
         let adjustedRotation = compass;
         // Adjusting rotation to prevent flipping when looking up
         if (e.beta < 0) {

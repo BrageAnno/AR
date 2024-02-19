@@ -140,7 +140,7 @@
       if (compass !== undefined && compass !== null) {
         let adjustedRotation = compass;
         // Adjusting rotation to prevent flipping when looking up
-        if (e.beta > 90 && e.beta < 180) {
+        if (e.beta < 0) {
           adjustedRotation += 180;
         }
         arrow.style.transform = `translate(-50%, -50%) rotate(${-adjustedRotation}deg)`;

@@ -79,9 +79,8 @@
 
   <script>
     const arrow = document.querySelector(".arrow");
-    let compass;
     let compassActive = false;
-    let lookControlsActive = false;
+    let previousCompass = null;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -106,9 +105,6 @@
               if (permissionState === 'granted') {
                 window.addEventListener("deviceorientation", compassHandler, true);
                 compassActive = true;
-                if (!lookControlsActive) {
-                  lookControlsActive = true;
-                }
               } else {
                 alert("Permission denied!");
               }
@@ -120,9 +116,6 @@
       } else {
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
         compassActive = true;
-        if (!lookControlsActive) {
-          lookControlsActive = true;
-        }
       }
     }
 
@@ -130,28 +123,35 @@
       window.removeEventListener("deviceorientation", compassHandler, true);
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
       compassActive = false;
-      if (lookControlsActive) {
-        lookControlsActive = false;
-      }
     }
 
     function compassHandler(e) {
-  let rawCompass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-  if (rawCompass !== undefined && rawCompass !== null) {
-    // Normalize the compass reading to the range of 0 to 360 degrees
-    let compass = rawCompass >= 0 ? rawCompass % 360 : 360 + (rawCompass % 360);
-    
-    let arrowRotation = -compass;
-    if (arrowRotation > 180) {
-      arrowRotation -= 360;
-    } else if (arrowRotation < -180) {
-      arrowRotation += 360;
-    }
+      let rawCompass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      if (rawCompass !== undefined && rawCompass !== null) {
+        // Normalize the compass reading to the range of 0 to 360 degrees
+        let compass = rawCompass >= 0 ? rawCompass % 360 : 360 + (rawCompass % 360);
 
-    arrow.style.transform = `translate(-50%, -50%) rotate(${arrowRotation}deg)`;
-    document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
-  }
-}
+        if (previousCompass !== null) {
+          // Calculate the rotation based on the difference between current and previous compass readings
+          let rotationDelta = compass - previousCompass;
+
+          // Adjust the rotation to ensure it falls within the range of -180 to 180 degrees
+          if (rotationDelta > 180) {
+            rotationDelta -= 360;
+          } else if (rotationDelta < -180) {
+            rotationDelta += 360;
+          }
+
+          // Apply the rotation to the arrow
+          let arrowRotation = -rotationDelta;
+          arrow.style.transform = `translate(-50%, -50%) rotate(${arrowRotation}deg)`;
+          document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
+        }
+
+        // Update the previous compass reading
+        previousCompass = compass;
+      }
+    }
   </script>
 </body>
 </html>

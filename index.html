@@ -136,12 +136,15 @@
     }
 
     function compassHandler(e) {
-      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-      if (compass !== undefined && compass !== null) {
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
-      }
-    }
+  let rawCompass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+  if (rawCompass !== undefined && rawCompass !== null) {
+    // Normalize the compass reading to the range of 0 to 360 degrees
+    compass = rawCompass >= 0 ? rawCompass % 360 : 360 + (rawCompass % 360);
+    
+    arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+    document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
+  }
+}
   </script>
 </body>
 </html>

@@ -83,8 +83,6 @@
     let compassActive = false;
     let lookControlsActive = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const compassReadings = [];
-    const numReadings = 5; // Adjust the number of readings to average for smoothing
 
     function toggleCompass() {
       if (compassActive) {
@@ -140,24 +138,9 @@
     function compassHandler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
-        compassReadings.push(compass);
-        if (compassReadings.length > numReadings) {
-          compassReadings.shift(); // Remove oldest reading
-        }
-        const filteredHeading = lowPassFilter(compassReadings);
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-filteredHeading}deg)`;
-        document.querySelector("#model").setAttribute("rotation", `0 ${filteredHeading} 0`);
+        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
-    }
-
-    // Simple low-pass filter implementation
-    function lowPassFilter(data) {
-      const alpha = 0.2; // Adjust the alpha value based on filtering strength (0 < alpha < 1)
-      let filteredValue = data[0];
-      for (let i = 1; i < data.length; i++) {
-        filteredValue = alpha * data[i] + (1 - alpha) * filteredValue;
-      }
-      return filteredValue;
     }
   </script>
 </body>

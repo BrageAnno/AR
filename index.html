@@ -70,7 +70,7 @@
 <body>
   <div class="arrow"></div>
   
-  <a-scene>
+  <a-scene id="a-scene" style="display: none;">
     <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 0 0"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
@@ -99,6 +99,7 @@
     }
 
     function startCompass() {
+      document.getElementById('a-scene').style.display = 'block'; // Show A-Frame scene
       if (isIOS) {
         if (typeof DeviceOrientationEvent.requestPermission === 'function') {
           DeviceOrientationEvent.requestPermission()
@@ -127,6 +128,7 @@
     }
 
     function stopCompass() {
+      document.getElementById('a-scene').style.display = 'none'; // Hide A-Frame scene
       window.removeEventListener("deviceorientation", compassHandler, true);
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
       compassActive = false;

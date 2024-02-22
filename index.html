@@ -9,7 +9,7 @@ var watchID;
 
 function getLocation() {
     if (navigator.geolocation) {
-        watchID = navigator.geolocation.watchPosition(showPosition, showError);
+        watchID = navigator.geolocation.watchPosition(showPosition, showError, { enableHighAccuracy: true });
     } else {
         alert("Geolocation is not supported by this browser.");
     }
@@ -50,7 +50,7 @@ function showError(error) {
 </head>
 <body>
 <h2>GPS Coordinates Test</h2>
-<button onclick="getLocation()">Get GPS Coordinates</button>
+<button onclick="getLocation()">Start Tracking</button>
 <div id="coordinates"></div>
 </body>
 </html>

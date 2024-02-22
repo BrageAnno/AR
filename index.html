@@ -166,6 +166,7 @@
 
     // GPS integration
     var watchID;
+    var conversionFactor = 111111; // Adjust this based on your location
 
     function getLocation() {
         if (navigator.geolocation) {
@@ -189,8 +190,8 @@
           initialPositionSet = true;
         }
         var cameraPosition = document.querySelector("#camera").getAttribute("position");
-        cameraPosition.x = longitude; // Longitude mapped to x-axis
-        cameraPosition.z = latitude; // Latitude mapped to z-axis
+        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
+        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
         document.querySelector("#camera").setAttribute("position", cameraPosition);
     }
 

@@ -85,6 +85,7 @@
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
+  <button class="button" onclick="resetCameraPosition()">Reset Position</button>
   
   <div id="coordinates"></div>
 
@@ -200,6 +201,14 @@
                 alert("An unknown error occurred.");
                 break;
         }
+    }
+
+    function resetCameraPosition() {
+      var cameraPosition = document.querySelector("#camera").getAttribute("position");
+      cameraPosition.x = 0; // Set x position to 0
+      cameraPosition.y = 0; // Set y position to 0
+      cameraPosition.z = 0; // Set z position to 0
+      document.querySelector("#camera").setAttribute("position", cameraPosition);
     }
 
     // Start tracking location

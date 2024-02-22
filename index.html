@@ -16,12 +16,22 @@ function getLocation() {
 function showPosition(position) {
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
-    alert("Latitude: " + latitude + "\nLongitude: " + longitude);
+    document.getElementById("coordinates").innerHTML = "Latitude: " + latitude + "<br>Longitude: " + longitude;
 }
 </script>
+<style>
+#coordinates {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+}
+</style>
 </head>
 <body>
 <h2>GPS Coordinates Test</h2>
 <button onclick="getLocation()">Get GPS Coordinates</button>
+<div id="coordinates"></div>
 </body>
 </html>

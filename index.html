@@ -13,8 +13,17 @@
     }
     
     a-scene {
-      height: 100vh;
+      height: 90vh; /* Adjusted to leave space for the coordinates display */
       width: 100vw;
+    }
+    
+    #coordinates {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      font-family: Arial, sans-serif;
     }
   </style>
 </head>
@@ -24,12 +33,18 @@
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
+  <div id="coordinates">Latitude: <span id="latitude"></span>, Longitude: <span id="longitude"></span></div>
+
   <script>
     let prevCoords = null;
 
     function updateCameraPosition(latitude, longitude) {
       // Set the camera's position relative to the model based on GPS coordinates
       document.querySelector('#camera').setAttribute('position', `${longitude} 0 ${latitude}`);
+
+      // Update displayed coordinates
+      document.getElementById('latitude').innerText = latitude.toFixed(6);
+      document.getElementById('longitude').innerText = longitude.toFixed(6);
     }
 
     function success(position) {

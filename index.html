@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GPS Coordinates Test</title>
 <script>
+var watchID;
+
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
+        watchID = navigator.geolocation.watchPosition(showPosition, showError);
     } else {
         alert("Geolocation is not supported by this browser.");
     }
@@ -22,12 +24,7 @@ function showPosition(position) {
 function showError(error) {
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            // Ask the user for permission again
-            if (confirm("This website wants to access your location. Do you allow it?")) {
-                getLocation();
-            } else {
-                alert("Geolocation access denied.");
-            }
+            alert("User denied the request for Geolocation.");
             break;
         case error.POSITION_UNAVAILABLE:
             alert("Location information is unavailable.");

@@ -45,9 +45,8 @@
 
     .button {
       position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 20px;
+      right: 20px;
       padding: 10px 20px;
       background-color: #007bff;
       color: white;
@@ -72,18 +71,6 @@
       background-color: rgba(255, 255, 255, 0.8);
       padding: 10px;
     }
-
-    .reset-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -95,7 +82,7 @@
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
-  <button class="reset-button" onclick="resetCameraPosition()">Reset Position</button>
+  <button class="button" onclick="resetCameraPosition()">Reset Position</button>
   
   <div id="coordinates"></div>
 
@@ -178,8 +165,8 @@
     }
 
     function updateCameraPosition(position) {
-        var latitude = position.coords.latitude * 100; // Scale latitude
-        var longitude = position.coords.longitude * 100; // Scale longitude
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
         var coordinatesDiv = document.getElementById("coordinates");
         coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
         if (!initialPositionSet) {

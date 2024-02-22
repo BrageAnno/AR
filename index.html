@@ -71,7 +71,7 @@
   <div class="arrow"></div>
   
   <a-scene>
-    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 0 0"></a-entity>
+    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 1.6 0"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
@@ -80,6 +80,8 @@
   <script>
     const arrow = document.querySelector(".arrow");
     let compassActive = false;
+    let previousAcceleration = { x: 0, y: 0, z: 0 };
+    let previousTimestamp = 0;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -103,6 +105,7 @@
             .then(permissionState => {
               if (permissionState === 'granted') {
                 window.addEventListener("deviceorientation", compassHandler, true);
+                window.addEventListener("devicemotion", motionHandler, true); // Add motion event listener
                 compassActive = true;
               } else {
                 alert("Permission denied!");
@@ -114,6 +117,7 @@
         }
       } else {
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
+        window.addEventListener("devicemotion", motionHandler, true); // Add motion event listener
         compassActive = true;
       }
     }
@@ -124,6 +128,7 @@
       } else {
         window.removeEventListener("deviceorientationabsolute", compassHandler, true);
       }
+      window.removeEventListener("devicemotion", motionHandler, true); // Remove motion event listener
       compassActive = false;
     }
 
@@ -133,6 +138,30 @@
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
+    }
+
+    function motionHandler(event) {
+      const acceleration = event.accelerationIncludingGravity;
+      const timestamp = event.timeStamp;
+      const deltaT = (timestamp - previousTimestamp) / 1000; // Convert milliseconds to seconds
+      previousTimestamp = timestamp;
+      
+      // Calculate displacement using the kinematic equation: displacement = 0.5 * (initial_velocity + final_velocity) * time
+      const deltaX = 0.5 * (acceleration.x + previousAcceleration.x) * deltaT;
+      const deltaY = 0.5 * (acceleration.y + previousAcceleration.y) * deltaT;
+      const deltaZ = 0.5 * (acceleration.z + previousAcceleration.z) * deltaT;
+
+      previousAcceleration = acceleration;
+
+      // Update camera position
+      const camera = document.querySelector("#camera");
+      const currentPosition = camera.getAttribute("position");
+      const newPosition = {
+        x: currentPosition.x + deltaX,
+        y: currentPosition.y + deltaY,
+        z: currentPosition.z + deltaZ
+      };
+      camera.setAttribute("position", newPosition);
     }
   </script>
 </body>

@@ -1,56 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPS Coordinates Test</title>
-<script>
-var watchID;
-
-function getLocation() {
-    if (navigator.geolocation) {
-        watchID = navigator.geolocation.watchPosition(showPosition, showError, { enableHighAccuracy: true });
-    } else {
-        alert("Geolocation is not supported by this browser.");
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Compass</title>
+  <script src="aframe.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f0f0; /* Change the background color as needed */
     }
-}
 
-function showPosition(position) {
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    document.getElementById("coordinates").innerText = "Latitude: " + latitude + ", Longitude: " + longitude;
-}
-
-function showError(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            alert("User denied the request for Geolocation.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            alert("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            alert("The request to get user location timed out.");
-            break;
-        case error.UNKNOWN_ERROR:
-            alert("An unknown error occurred.");
-            break;
+    .arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-style: solid;
+      border-width: 30px 20px 0 20px;
+      border-color: red transparent transparent transparent;
+      z-index: 1;
     }
-}
-</script>
-<style>
-#coordinates {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-}
-</style>
+
+    #model {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+    }
+
+    a-scene {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+
+    .button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .button.green {
+      background-color: green;
+    }
+
+    .button.red {
+      background-color: red;
+    }
+  </style>
 </head>
 <body>
-<h2>GPS Coordinates Test</h2>
-<button onclick="getLocation()">Start Tracking</button>
-<div id="coordinates"></div>
+  <div class="arrow"></div>
+  
+  <a-scene>
+    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 0 0"></a-entity>
+    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
+  </a-scene>
+
+  <button class="button red" onclick="toggleCompass()">Compass is Off</button>
+
+  <script>
+    const arrow = document.querySelector(".arrow");
+    let compass;
+    let compassActive = false;
+    let lookControlsActive = false;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    function toggleCompass() {
+      if (compassActive) {
+        stopCompass();
+        document.querySelector(".button").classList.remove("green");
+        document.querySelector(".button").classList.add("red");
+        document.querySelector(".button").textContent = "Compass is Off";
+      } else {
+        startCompass();
+        document.querySelector(".button").classList.remove("red");
+        document.querySelector(".button").classList.add("green");
+        document.querySelector(".button").textContent = "Compass is On";
+      }
+    }
+
+    function startCompass() {
+      if (isIOS) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+              if (permissionState === 'granted') {
+                window.addEventListener("deviceorientation", compassHandler, true);
+                compassActive = true;
+                if (!lookControlsActive) {
+                  lookControlsActive = true;
+                }
+              } else {
+                alert("Permission denied!");
+              }
+            })
+            .catch(console.error);
+        } else {
+          alert("Your device does not support requesting permission.");
+        }
+      } else {
+        window.addEventListener("deviceorientationabsolute", compassHandler, true);
+        compassActive = true;
+        if (!lookControlsActive) {
+          lookControlsActive = true;
+        }
+      }
+    }
+
+    function stopCompass() {
+      window.removeEventListener("deviceorientation", compassHandler, true);
+      window.removeEventListener("deviceorientationabsolute", compassHandler, true);
+      compassActive = false;
+      if (lookControlsActive) {
+        lookControlsActive = false;
+      }
+    }
+
+    function compassHandler(e) {
+      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      if (compass !== undefined && compass !== null) {
+        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
+      }
+    }
+
+    // GPS integration
+    var watchID;
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            watchID = navigator.geolocation.watchPosition(updateCameraPosition, showError, { enableHighAccuracy: true });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function updateCameraPosition(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var cameraPosition = document.querySelector("#camera").getAttribute("position");
+        cameraPosition.x = longitude; // Longitude mapped to x-axis
+        cameraPosition.z = latitude; // Latitude mapped to z-axis
+        document.querySelector("#camera").setAttribute("position", cameraPosition);
+    }
+
+    function showError(error) {
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
+        }
+    }
+  </script>
 </body>
 </html>

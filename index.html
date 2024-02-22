@@ -80,7 +80,7 @@
   <div class="arrow"></div>
   
   <a-scene>
-    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 0 0"></a-entity>
+    <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
@@ -93,6 +93,7 @@
     let compass;
     let compassActive = false;
     let lookControlsActive = false;
+    let initialPositionSet = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -170,6 +171,14 @@
         var longitude = position.coords.longitude;
         var coordinatesDiv = document.getElementById("coordinates");
         coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
+        if (!initialPositionSet) {
+          var cameraPosition = document.querySelector("#camera").getAttribute("position");
+          cameraPosition.x = 0; // Set initial x position to 0
+          cameraPosition.y = 0; // Set initial y position to 0
+          cameraPosition.z = 0; // Set initial z position to 0
+          document.querySelector("#camera").setAttribute("position", cameraPosition);
+          initialPositionSet = true;
+        }
         var cameraPosition = document.querySelector("#camera").getAttribute("position");
         cameraPosition.x = longitude; // Longitude mapped to x-axis
         cameraPosition.z = latitude; // Latitude mapped to z-axis

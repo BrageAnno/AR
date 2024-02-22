@@ -1,74 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Compass with GPS</title>
-  <script src="aframe.min.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden; /* Hide overflow to prevent scrollbars */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPS Coordinates Test</title>
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        alert("Geolocation is not supported by this browser.");
     }
-    
-    a-scene {
-      height: 90vh; /* Adjusted to leave space for the coordinates display */
-      width: 100vw;
+}
+
+function showPosition(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    document.getElementById("coordinates").innerText = "Latitude: " + latitude + ", Longitude: " + longitude;
+}
+
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            // Ask the user for permission again
+            if (confirm("This website wants to access your location. Do you allow it?")) {
+                getLocation();
+            } else {
+                alert("Geolocation access denied.");
+            }
+            break;
+        case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.");
+            break;
+        case error.TIMEOUT:
+            alert("The request to get user location timed out.");
+            break;
+        case error.UNKNOWN_ERROR:
+            alert("An unknown error occurred.");
+            break;
     }
-    
-    #coordinates {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      font-family: Arial, sans-serif;
-    }
-  </style>
+}
+</script>
+<style>
+#coordinates {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+}
+</style>
 </head>
 <body>
-  <a-scene>
-    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 0 0"></a-entity>
-    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
-  </a-scene>
-
-  <div id="coordinates">Latitude: <span id="latitude">0.000000</span>, Longitude: <span id="longitude">0.000000</span></div>
-
-  <script>
-    let prevCoords = null;
-
-    function updateCameraPosition(latitude, longitude) {
-      // Set the camera's position relative to the model based on GPS coordinates
-      document.querySelector('#camera').setAttribute('position', `${longitude} 0 ${latitude}`);
-
-      // Update displayed coordinates
-      document.getElementById('latitude').innerText = latitude.toFixed(6);
-      document.getElementById('longitude').innerText = longitude.toFixed(6);
-    }
-
-    function success(position) {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-
-      updateCameraPosition(latitude, longitude);
-    }
-
-    function error() {
-      console.error('Unable to retrieve your location');
-    }
-
-    // Request location updates
-    function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success, error);
-      } else {
-        console.error('Geolocation is not supported by this browser');
-      }
-    }
-
-    // Ask for permission
-    getLocation();
-  </script>
+<h2>GPS Coordinates Test</h2>
+<button onclick="getLocation()">Get GPS Coordinates</button>
+<div id="coordinates"></div>
 </body>
 </html>

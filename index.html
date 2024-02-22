@@ -71,8 +71,8 @@
   <div class="arrow"></div>
   
   <a-scene>
-    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 1.6 0"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
+    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 1.6 0"></a-entity>
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
@@ -149,18 +149,17 @@
       // Calculate displacement using the kinematic equation: displacement = 0.5 * (initial_velocity + final_velocity) * time
       const deltaX = 0.5 * (acceleration.x + previousAcceleration.x) * deltaT;
       const deltaY = 0.5 * (acceleration.y + previousAcceleration.y) * deltaT;
-      // Ignore changes in the z-coordinate
-      const deltaZ = 0;
 
       previousAcceleration = acceleration;
 
       // Update camera position
       const camera = document.querySelector("#camera");
-      const currentPosition = camera.getAttribute("position");
+      const model = document.querySelector("#model");
+      const modelPosition = model.getAttribute("position");
       const newPosition = {
-        x: currentPosition.x + deltaX,
-        y: currentPosition.y + deltaY,
-        z: currentPosition.z + deltaZ
+        x: modelPosition.x + deltaX,
+        y: modelPosition.y + deltaY,
+        z: modelPosition.z // Keep the z-coordinate unchanged
       };
       camera.setAttribute("position", newPosition);
     }

@@ -149,7 +149,8 @@
       // Calculate displacement using the kinematic equation: displacement = 0.5 * (initial_velocity + final_velocity) * time
       const deltaX = 0.5 * (acceleration.x + previousAcceleration.x) * deltaT;
       const deltaY = 0.5 * (acceleration.y + previousAcceleration.y) * deltaT;
-      const deltaZ = 0.5 * (acceleration.z + previousAcceleration.z) * deltaT;
+      // Ignore changes in the z-coordinate
+      const deltaZ = 0;
 
       previousAcceleration = acceleration;
 

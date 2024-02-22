@@ -105,7 +105,6 @@
             .then(permissionState => {
               if (permissionState === 'granted') {
                 window.addEventListener("deviceorientation", compassHandler, true);
-                window.addEventListener("devicemotion", handleMotion);
                 compassActive = true;
                 if (!lookControlsActive) {
                   lookControlsActive = true;
@@ -120,7 +119,6 @@
         }
       } else {
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
-        window.addEventListener("devicemotion", handleMotion);
         compassActive = true;
         if (!lookControlsActive) {
           lookControlsActive = true;
@@ -131,7 +129,6 @@
     function stopCompass() {
       window.removeEventListener("deviceorientation", compassHandler, true);
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
-      window.removeEventListener("devicemotion", handleMotion);
       compassActive = false;
       if (lookControlsActive) {
         lookControlsActive = false;
@@ -146,6 +143,7 @@
       }
     }
 
+    window.addEventListener("devicemotion", handleMotion);
     function handleMotion(event) {
       // Access accelerometer data
       const accelerationX = event.accelerationIncludingGravity.x;
@@ -153,9 +151,9 @@
       const accelerationZ = event.accelerationIncludingGravity.z;
 
       // Map accelerometer data to virtual movement (adjust scaling as needed)
-      const virtualMovementX = accelerationX * 0.1; // Adjust scaling factor as needed
-      const virtualMovementY = accelerationY * 0.1; // Adjust scaling factor as needed
-      const virtualMovementZ = accelerationZ * 0.1; // Adjust scaling factor as needed
+      const virtualMovementX = accelerationX * 0.01; // Adjust scaling factor as needed
+      const virtualMovementY = accelerationY * 0.01; // Adjust scaling factor as needed
+      const virtualMovementZ = accelerationZ * 0.01; // Adjust scaling factor as needed
 
       // Update camera position in the A-Frame scene
       const camera = document.querySelector("#camera");

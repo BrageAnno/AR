@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Accelerometer-based Movement</title>
+  <title>Compass</title>
   <script src="aframe.min.js"></script>
   <style>
     body {
@@ -70,7 +70,7 @@
 <body>
   <div class="arrow"></div>
   
-  <a-scene id="a-scene" style="display: none;">
+  <a-scene>
     <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 0 0"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
@@ -99,13 +99,13 @@
     }
 
     function startCompass() {
-      document.getElementById('a-scene').style.display = 'block'; // Show A-Frame scene
       if (isIOS) {
         if (typeof DeviceOrientationEvent.requestPermission === 'function') {
           DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
               if (permissionState === 'granted') {
                 window.addEventListener("deviceorientation", compassHandler, true);
+                window.addEventListener("devicemotion", motionHandler, true); // Add motion event listener
                 compassActive = true;
                 if (!lookControlsActive) {
                   lookControlsActive = true;
@@ -120,17 +120,19 @@
         }
       } else {
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
+        window.addEventListener("devicemotion", motionHandler, true); // Add motion event listener
         compassActive = true;
-        if (!lookControlsActive) {
+        if (!lookControls
+        Active) {
           lookControlsActive = true;
         }
       }
     }
 
     function stopCompass() {
-      document.getElementById('a-scene').style.display = 'none'; // Hide A-Frame scene
       window.removeEventListener("deviceorientation", compassHandler, true);
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
+      window.removeEventListener("devicemotion", motionHandler, true); // Remove motion event listener
       compassActive = false;
       if (lookControlsActive) {
         lookControlsActive = false;
@@ -145,23 +147,25 @@
       }
     }
 
-    window.addEventListener("devicemotion", handleMotion);
-    function handleMotion(event) {
-      // Access accelerometer data
-      const accelerationX = event.accelerationIncludingGravity.x;
-      const accelerationY = event.accelerationIncludingGravity.y;
-      const accelerationZ = event.accelerationIncludingGravity.z;
-
-      // Map accelerometer data to virtual movement (adjust scaling as needed)
-      const virtualMovementX = accelerationX * 0.01; // Adjust scaling factor as needed
-      const virtualMovementY = accelerationY * 0.01; // Adjust scaling factor as needed
-      const virtualMovementZ = accelerationZ * 0.01; // Adjust scaling factor as needed
-
-      // Update camera position in the A-Frame scene
+    // Function to handle device motion
+    function motionHandler(event) {
+      const acceleration = event.accelerationIncludingGravity; // Get the acceleration including gravity
+      const deltaT = 0.02; // Time interval for integration (adjust as needed)
+      
+      // Calculate displacement using the kinematic equation: displacement = 0.5 * acceleration * (time^2)
+      const deltaX = 0.5 * acceleration.x * deltaT * deltaT;
+      const deltaY = 0.5 * acceleration.y * deltaT * deltaT;
+      const deltaZ = 0.5 * acceleration.z * deltaT * deltaT;
+      
+      // Update camera position
       const camera = document.querySelector("#camera");
-      camera.object3D.position.x += virtualMovementX;
-      camera.object3D.position.y += virtualMovementY;
-      camera.object3D.position.z += virtualMovementZ;
+      const currentPosition = camera.getAttribute("position");
+      const newPosition = {
+        x: currentPosition.x + deltaX,
+        y: currentPosition.y + deltaY,
+        z: currentPosition.z + deltaZ
+      };
+      camera.setAttribute("position", newPosition);
     }
   </script>
 </body>

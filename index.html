@@ -9,7 +9,9 @@
     body {
       margin: 0;
       padding: 0;
-      position: relative; /* Added to position the reset button */
+      display: flex;
+      align-items: center;
+      justify-content: center;
       height: 100vh;
       background-color: #f0f0f0; /* Change the background color as needed */
     }
@@ -44,19 +46,16 @@
     }
 
     .button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       padding: 10px 20px;
       background-color: #007bff;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-    }
-
-    .button.green {
-      background-color: green;
     }
 
     .button.red {
@@ -71,6 +70,18 @@
       background-color: rgba(255, 255, 255, 0.8);
       padding: 10px;
     }
+
+    .reset-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -82,7 +93,7 @@
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
-  <button class="button" onclick="resetCameraPosition()">Reset Position</button>
+  <button class="reset-button" onclick="resetCameraPosition()">Reset Position</button>
   
   <div id="coordinates"></div>
 
@@ -178,9 +189,8 @@
           initialPositionSet = true;
         }
         var cameraPosition = document.querySelector("#camera").getAttribute("position");
-        // Normalize position values based on the size and scale of your 3D scene
-        cameraPosition.x = (longitude - /* center_x */); // Longitude mapped to x-axis
-        cameraPosition.z = (latitude - /* center_z */); // Latitude mapped to z-axis
+        cameraPosition.x = longitude; // Longitude mapped to x-axis
+        cameraPosition.z = latitude; // Latitude mapped to z-axis
         document.querySelector("#camera").setAttribute("position", cameraPosition);
     }
 

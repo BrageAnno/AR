@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Compass with GPS</title>
-  <script src="aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -26,12 +26,13 @@
 
   <script>
     let prevCoords = null;
+    const movementScaleFactor = 0.01; // Adjust this factor to control the amount of movement
 
     function updateCameraPosition(latitude, longitude) {
       // Scale latitude and longitude to fit virtual environment
-      // For simplicity, we assume latitude and longitude directly correspond to virtual X and Y
-      let virtualX = longitude; // Adjust this scaling as needed
-      let virtualY = latitude;  // Adjust this scaling as needed
+      // Multiply by a factor to amplify the movement
+      let virtualX = longitude * movementScaleFactor; 
+      let virtualY = latitude * movementScaleFactor;  
 
       // Update camera position
       document.querySelector('#camera').setAttribute('position', `${virtualX} ${virtualY} 0`);

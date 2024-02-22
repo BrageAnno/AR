@@ -59,7 +59,16 @@
     }
 
     // Request location updates
-    navigator.geolocation.watchPosition(success, error);
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        console.error('Geolocation is not supported by this browser');
+      }
+    }
+
+    // Ask for permission
+    getLocation();
   </script>
 </body>
 </html>

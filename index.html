@@ -79,9 +79,10 @@
 
   <script>
     const arrow = document.querySelector(".arrow");
-    let compass;
     let compassActive = false;
     let lookControlsActive = false;
+    let previousAcceleration = { x: 0, y: 0, z: 0 };
+    let previousTimestamp = 0;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -105,11 +106,7 @@
             .then(permissionState => {
               if (permissionState === 'granted') {
                 window.addEventListener("deviceorientation", compassHandler, true);
-                window.addEventListener("devicemotion", motionHandler, true); // Add motion event listener
                 compassActive = true;
-                if (!lookControlsActive) {
-                  lookControlsActive = true;
-                }
               } else {
                 alert("Permission denied!");
               }
@@ -120,43 +117,39 @@
         }
       } else {
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
-        window.addEventListener("devicemotion", motionHandler, true); // Add motion event listener
         compassActive = true;
-        if (!lookControls
-        Active) {
-          lookControlsActive = true;
-        }
       }
     }
 
     function stopCompass() {
       window.removeEventListener("deviceorientation", compassHandler, true);
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
-      window.removeEventListener("devicemotion", motionHandler, true); // Remove motion event listener
       compassActive = false;
-      if (lookControlsActive) {
-        lookControlsActive = false;
-      }
     }
 
     function compassHandler(e) {
-      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      const compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
     }
 
-    // Function to handle device motion
+    window.addEventListener("devicemotion", motionHandler, true); // Add motion event listener
+
     function motionHandler(event) {
-      const acceleration = event.accelerationIncludingGravity; // Get the acceleration including gravity
-      const deltaT = 0.02; // Time interval for integration (adjust as needed)
+      const acceleration = event.accelerationIncludingGravity;
+      const timestamp = event.timeStamp;
+      const deltaT = (timestamp - previousTimestamp) / 1000; // Convert milliseconds to seconds
+      previousTimestamp = timestamp;
       
-      // Calculate displacement using the kinematic equation: displacement = 0.5 * acceleration * (time^2)
-      const deltaX = 0.5 * acceleration.x * deltaT * deltaT;
-      const deltaY = 0.5 * acceleration.y * deltaT * deltaT;
-      const deltaZ = 0.5 * acceleration.z * deltaT * deltaT;
-      
+      // Calculate displacement using the kinematic equation: displacement = 0.5 * (initial_velocity + final_velocity) * time
+      const deltaX = 0.5 * (acceleration.x + previousAcceleration.x) * deltaT;
+      const deltaY = 0.5 * (acceleration.y + previousAcceleration.y) * deltaT;
+      const deltaZ = 0.5 * (acceleration.z + previousAcceleration.z) * deltaT;
+
+      previousAcceleration = acceleration;
+
       // Update camera position
       const camera = document.querySelector("#camera");
       const currentPosition = camera.getAttribute("position");

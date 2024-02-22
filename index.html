@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Compass</title>
-  <script src="aframe.min.js"></script>
+  <title>Accelerometer-based Movement</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -105,6 +105,7 @@
             .then(permissionState => {
               if (permissionState === 'granted') {
                 window.addEventListener("deviceorientation", compassHandler, true);
+                window.addEventListener("devicemotion", handleMotion);
                 compassActive = true;
                 if (!lookControlsActive) {
                   lookControlsActive = true;
@@ -119,6 +120,7 @@
         }
       } else {
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
+        window.addEventListener("devicemotion", handleMotion);
         compassActive = true;
         if (!lookControlsActive) {
           lookControlsActive = true;
@@ -129,6 +131,7 @@
     function stopCompass() {
       window.removeEventListener("deviceorientation", compassHandler, true);
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
+      window.removeEventListener("devicemotion", handleMotion);
       compassActive = false;
       if (lookControlsActive) {
         lookControlsActive = false;
@@ -141,6 +144,24 @@
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
+    }
+
+    function handleMotion(event) {
+      // Access accelerometer data
+      const accelerationX = event.accelerationIncludingGravity.x;
+      const accelerationY = event.accelerationIncludingGravity.y;
+      const accelerationZ = event.accelerationIncludingGravity.z;
+
+      // Map accelerometer data to virtual movement (adjust scaling as needed)
+      const virtualMovementX = accelerationX * 0.1; // Adjust scaling factor as needed
+      const virtualMovementY = accelerationY * 0.1; // Adjust scaling factor as needed
+      const virtualMovementZ = accelerationZ * 0.1; // Adjust scaling factor as needed
+
+      // Update camera position in the A-Frame scene
+      const camera = document.querySelector("#camera");
+      camera.object3D.position.x += virtualMovementX;
+      camera.object3D.position.y += virtualMovementY;
+      camera.object3D.position.z += virtualMovementZ;
     }
   </script>
 </body>

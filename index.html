@@ -73,7 +73,7 @@
   </a-scene>
 
   <a-scene id="scene2">
-    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 0 0" rotation="0 0 0"></a-entity>
+    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 1 0" rotation="0 0 0"></a-entity>
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
@@ -198,7 +198,7 @@
       // Reset model position
       var modelPosition = document.querySelector("#model").getAttribute("position");
       modelPosition.x = 0; // Set x position to 0
-      modelPosition.y = 0; // Set y position to 0
+      modelPosition.y = 1; // Set y position to 1 (moved up)
       modelPosition.z = 0; // Set z position to 0
       document.querySelector("#model").setAttribute("position", modelPosition);
     }

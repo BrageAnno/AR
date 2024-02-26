@@ -194,7 +194,7 @@
     function resetCameraPosition() {
   var cameraPosition = document.querySelector("#camera").getAttribute("position");
   var model = document.querySelector("#model");
-  model.setAttribute("position", `${cameraPosition.x} ${cameraPosition.y} ${cameraPosition.z}`);
+  model.setAttribute("position", `0 0 0`);
   cameraPosition.x = 0; // Set x position to 0
   cameraPosition.y = 0; // Set y position to 0
   cameraPosition.z = 0; // Set z position to 0

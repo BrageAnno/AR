@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Compass</title>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="aframe.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -104,7 +104,6 @@
     let lookControlsActive = false;
     let initialPositionSet = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const metersToVirtualMeters = 0.02; // Conversion factor
 
     function toggleCompass() {
       if (compassActive) {
@@ -167,7 +166,7 @@
 
     // GPS integration
     var watchID;
-    var conversionFactor = 50; // Adjust this based on your location and desired scale
+    var conversionFactor = 111111; // Adjust this based on your location
 
     function getLocation() {
         if (navigator.geolocation) {
@@ -191,8 +190,8 @@
           initialPositionSet = true;
         }
         var cameraPosition = document.querySelector("#camera").getAttribute("position");
-        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor * metersToVirtualMeters; // Longitude mapped to x-axis
-        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor * metersToVirtualMeters; // Latitude mapped to z-axis
+        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
+        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
         document.querySelector("#camera").setAttribute("position", cameraPosition);
     }
 

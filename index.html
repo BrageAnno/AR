@@ -26,12 +26,6 @@
       z-index: 1;
     }
 
-    a-scene {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-    }
-
     .button {
       position: fixed;
       bottom: 20px;
@@ -74,13 +68,16 @@
 <body>
   <div class="arrow"></div>
   
-  <a-scene>
-    <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
+  <a-scene id="scene1">
+    <a-entity id="camera1" camera look-controls="touchEnabled: false"></a-entity>
+  </a-scene>
+
+  <a-scene id="scene2">
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 0 0" rotation="0 0 0"></a-entity>
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
-  <button class="reset-button" onclick="resetCameraPosition()">Reset Position</button>
+  <button class="reset-button" onclick="resetPositions()">Reset Positions</button>
   
   <div id="coordinates"></div>
 
@@ -163,15 +160,15 @@
     }
 
     function updateCameraPosition(position) {
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    var coordinatesDiv = document.getElementById("coordinates");
-    coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
-    var cameraPosition = document.querySelector("#camera").getAttribute("position");
-    cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
-    cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
-    document.querySelector("#camera").setAttribute("position", cameraPosition);
-}
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var coordinatesDiv = document.getElementById("coordinates");
+        coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
+        var cameraPosition = document.querySelector("#camera1").getAttribute("position");
+        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
+        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
+        document.querySelector("#camera1").setAttribute("position", cameraPosition);
+    }
 
     function showError(error) {
         switch(error.code) {
@@ -190,16 +187,20 @@
         }
     }
 
-    function resetCameraPosition() {
-      var cameraPosition = document.querySelector("#camera").getAttribute("position");
-      cameraPosition.x = 0; // Set x position to 0
-      cameraPosition.y = 0; // Set y position to 0
-      cameraPosition.z = 0; // Set z position to 0
-      document.querySelector("#camera").setAttribute("position", cameraPosition);
-      
-      // Reset model position to match camera position
-      var model = document.querySelector("#model");
-      model.setAttribute("position", `${cameraPosition.x} ${cameraPosition.y} ${cameraPosition.z}`);
+    function resetPositions() {
+      // Reset camera position
+      var cameraPosition = document.querySelector("#camera1").getAttribute("position");
+      cameraPosition.x = 0;
+      cameraPosition.y = 0;
+      cameraPosition.z = 0;
+      document.querySelector("#camera1").setAttribute("position", cameraPosition);
+
+      // Reset model position
+      var modelPosition = document.querySelector("#model").getAttribute("position");
+      modelPosition.x = 0; // Set x position to 0
+      modelPosition.y = 0; // Set y position to 0
+      modelPosition.z = 0; // Set z position to 0
+      document.querySelector("#model").setAttribute("position", modelPosition);
     }
 
     // Start tracking location

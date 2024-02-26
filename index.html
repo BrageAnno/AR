@@ -75,6 +75,9 @@
   <div class="arrow"></div>
   
   <a-scene>
+    <!-- Cube -->
+    <a-box position="0 1.5 -5" width="1" height="1" depth="1" color="blue"></a-box>
+    
     <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
@@ -152,7 +155,7 @@
 
     // GPS integration
     var watchID;
-    var conversionFactor = 9999; // Adjust this based on your location
+    var conversionFactor = 0.00000001; // Adjust this based on your location
 
     function getLocation() {
         if (navigator.geolocation) {

@@ -17,8 +17,9 @@
       position: absolute;
       width: 0;
       height: 0;
-      top: 20px; /* Adjust as needed */
-      left: 20px; /* Adjust as needed */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       border-style: solid;
       border-width: 30px 20px 0 20px;
       border-color: red transparent transparent transparent;
@@ -74,8 +75,8 @@
   <div class="arrow"></div>
   
   <a-scene>
-    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 1.6 0"></a-entity> <!-- Adjust position as needed -->
-    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0" position="0 0 -5"></a-entity> <!-- Adjust position as needed -->
+    <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
+    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
@@ -88,7 +89,6 @@
     let compass;
     let compassActive = false;
     let lookControlsActive = false;
-    let initialPositionSet = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -152,7 +152,7 @@
 
     // GPS integration
     var watchID;
-    var conversionFactor = 0.00001; // Adjust this based on your location
+    var conversionFactor = 111111; // Adjust this based on your location
 
     function getLocation() {
         if (navigator.geolocation) {
@@ -167,14 +167,6 @@
         var longitude = position.coords.longitude;
         var coordinatesDiv = document.getElementById("coordinates");
         coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
-        if (!initialPositionSet) {
-          var cameraPosition = document.querySelector("#camera").getAttribute("position");
-          cameraPosition.x = 0; // Set initial x position to 0
-          cameraPosition.y = 0; // Set initial y position to 0
-          cameraPosition.z = 0; // Set initial z position to 0
-          document.querySelector("#camera").setAttribute("position", cameraPosition);
-          initialPositionSet = true;
-        }
         var cameraPosition = document.querySelector("#camera").getAttribute("position");
         cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
         cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis

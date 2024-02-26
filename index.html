@@ -123,12 +123,16 @@
     }
 
     function compassHandler(e) {
-      const compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-      if (compass !== undefined && compass !== null) {
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-        document.querySelector("#camera").setAttribute("rotation", `0 ${compass} 0`);
-      }
-    }
+  const alpha = e.alpha || 0; // Get the alpha rotation angle
+  const beta = e.beta || 0; // Get the beta rotation angle
+  const gamma = e.gamma || 0; // Get the gamma rotation angle
+
+  const rotationY = alpha; // Use alpha as the rotation around the vertical axis (Y-axis)
+  const rotationX = beta; // Use beta as the rotation around the horizontal axis (X-axis)
+
+  // Apply the rotation to the camera
+  document.querySelector("#camera").setAttribute("rotation", `${rotationX} ${rotationY} 0`);
+}
 
     // GPS integration
     var watchID;

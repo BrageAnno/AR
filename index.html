@@ -149,7 +149,7 @@
 
     // GPS integration
     var watchID;
-    var conversionFactor = 0.000001; // Adjust this based on your location
+    var conversionFactor = 0.00001; // Adjust this based on your location
 
     function getLocation() {
         if (navigator.geolocation) {
@@ -164,11 +164,12 @@
         var longitude = position.coords.longitude;
         var coordinatesDiv = document.getElementById("coordinates");
         coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
-        var cameraPosition = document.querySelector("#camera1").getAttribute("position");
+        var camera = document.querySelector("#camera1").getObject3D('camera');
+        var cameraPosition = camera.position;
         cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
         cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
-        document.querySelector("#camera1").setAttribute("position", cameraPosition);
-    }
+        camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      }
 
     function showError(error) {
         switch(error.code) {

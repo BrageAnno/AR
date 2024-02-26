@@ -73,7 +73,7 @@
   </a-scene>
 
   <a-scene id="scene2">
-    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 1.2 0" rotation="0 0 0"></a-entity>
+    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 1.5 0" rotation="0 0 0"></a-entity>
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
@@ -149,7 +149,7 @@
 
     // GPS integration
     var watchID;
-    var conversionFactor = 111111; // Adjust this based on your location
+    var conversionFactor = 0.00001; // Adjust this based on your location
 
     function getLocation() {
         if (navigator.geolocation) {

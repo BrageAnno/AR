@@ -75,17 +75,8 @@
   <div class="arrow"></div>
   
   <a-scene>
-    <!-- Blue Cube -->
-    <a-entity id="blue-cube" geometry="primitive: box; width: 0.2; height: 0.2; depth: 0.2;" material="color: blue" position="0 0 -1"></a-entity>
-    <!-- Trail Effect -->
-    <a-entity id="trail" line="color: blue; opacity: 0.5"></a-entity>
-    
-    <a-entity id="camera" camera look-controls="touchEnabled: false">
-      <!-- Small 3D Cube attached to camera -->
-      <a-entity position="0 0 -1"></a-entity>
-    </a-entity>
-    
-    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
+    <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
+    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 0 0" rotation="0 0 0"></a-entity>
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
@@ -99,12 +90,6 @@
     let compassActive = false;
     let lookControlsActive = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-    // Variables for trail effect
-    const trailPoints = [];
-    const trailMaxLength = 100; // Adjust as needed
-    const trailInterval = 100; // Adjust as needed
-    let lastTrailUpdate = Date.now();
 
     function toggleCompass() {
       if (compassActive) {
@@ -162,25 +147,7 @@
       if (compass !== undefined && compass !== null) {
         arrow.style.transform = `rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
-
-        // Update trail with a delay
-        if (Date.now() - lastTrailUpdate >= trailInterval) {
-          lastTrailUpdate = Date.now();
-          updateTrail();
-        }
       }
-    }
-
-    function updateTrail() {
-      const cameraPosition = document.querySelector("#camera").getAttribute("position");
-      trailPoints.push({ x: cameraPosition.x, z: cameraPosition.z });
-
-      if (trailPoints.length > trailMaxLength) {
-        trailPoints.shift();
-      }
-
-      const trailString = trailPoints.map(point => `${point.x} 1.5 ${point.z}`).join(',');
-      document.querySelector("#trail").setAttribute("line", `start: ${trailString}`);
     }
 
     // GPS integration
@@ -188,47 +155,39 @@
     var conversionFactor = 111111; // Adjust this based on your location
 
     function getLocation() {
-      if (navigator.geolocation) {
-        watchID = navigator.geolocation.watchPosition(updateCameraPosition, showError, { enableHighAccuracy: true });
-      } else {
-        alert("Geolocation is not supported by this browser.");
-      }
+        if (navigator.geolocation) {
+            watchID = navigator.geolocation.watchPosition(updateCameraPosition, showError, { enableHighAccuracy: true });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     }
 
     function updateCameraPosition(position) {
-      var latitude = position.coords.latitude;
-      var longitude = position.coords.longitude;
-      var coordinatesDiv = document.getElementById("coordinates");
-      coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
-      var cameraPosition = document.querySelector("#camera").getAttribute("position");
-      cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
-      cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
-      document.querySelector("#camera").setAttribute("position", cameraPosition);
-
-      // Move the blue cube along with a delay
-      setTimeout(() => {
-        const blueCubePosition = document.querySelector("#blue-cube").getAttribute("position");
-        blueCubePosition.x = cameraPosition.x;
-        blueCubePosition.z = cameraPosition.z;
-        document.querySelector("#blue-cube").setAttribute("position", blueCubePosition);
-      }, 500); // Adjust the delay as needed
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var coordinatesDiv = document.getElementById("coordinates");
+        coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
+        var cameraPosition = document.querySelector("#camera").getAttribute("position");
+        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
+        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
+        document.querySelector("#camera").setAttribute("position", cameraPosition);
     }
 
     function showError(error) {
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          alert("User denied the request for Geolocation.");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          alert("Location information is unavailable.");
-          break;
-        case error.TIMEOUT:
-          alert("The request to get user location timed out.");
-          break;
-        case error.UNKNOWN_ERROR:
-          alert("An unknown error occurred.");
-          break;
-      }
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
+        }
     }
 
     function resetCameraPosition() {

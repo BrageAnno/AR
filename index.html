@@ -177,23 +177,27 @@
     }
 
     function updateCameraPosition(position) {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        var coordinatesDiv = document.getElementById("coordinates");
-        coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
-        if (!initialPositionSet) {
-          var cameraPosition = document.querySelector("#camera").getAttribute("position");
-          cameraPosition.x = 0; // Set initial x position to 0
-          cameraPosition.y = 0; // Set initial y position to 0
-          cameraPosition.z = 0; // Set initial z position to 0
-          document.querySelector("#camera").setAttribute("position", cameraPosition);
-          initialPositionSet = true;
-        }
-        var cameraPosition = document.querySelector("#camera").getAttribute("position");
-        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
-        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
-        document.querySelector("#camera").setAttribute("position", cameraPosition);
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    var coordinatesDiv = document.getElementById("coordinates");
+    coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
+    if (!initialPositionSet) {
+        initialPositionSet = true;
     }
+    var cameraPosition = document.querySelector("#camera").getAttribute("position");
+    cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
+    cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
+    document.querySelector("#camera").setAttribute("position", cameraPosition);
+
+    // Calculate camera rotation to look towards the model
+    var modelPosition = document.querySelector("#model").getAttribute("position");
+    var deltaX = modelPosition.x - cameraPosition.x;
+    var deltaZ = modelPosition.z - cameraPosition.z;
+    var theta = Math.atan2(deltaZ, deltaX);
+    var cameraRotation = document.querySelector("#camera").getAttribute("rotation");
+    cameraRotation.y = THREE.Math.radToDeg(theta) + 90; // Adjust for initial camera rotation
+    document.querySelector("#camera").setAttribute("rotation", cameraRotation);
+}
 
     function showError(error) {
         switch(error.code) {

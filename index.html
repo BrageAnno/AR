@@ -76,9 +76,8 @@
   
   <a-scene>
     <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
+    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 0 0" rotation="0 0 0"></a-entity>
   </a-scene>
-
-  <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" position="0 0 0" rotation="0 0 0"></a-entity>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
   <button class="reset-button" onclick="resetCameraPosition()">Reset Position</button>
@@ -192,14 +191,17 @@
     }
 
     function resetCameraPosition() {
-  var cameraPosition = document.querySelector("#camera").getAttribute("position");
-  var model = document.querySelector("#model");
-  model.setAttribute("position", `0 0 0`);
-  cameraPosition.x = 0; // Set x position to 0
-  cameraPosition.y = 0; // Set y position to 0
-  cameraPosition.z = 0; // Set z position to 0
-  document.querySelector("#camera").setAttribute("position", cameraPosition);
-}
+      var cameraPosition = document.querySelector("#camera").getAttribute("position");
+      cameraPosition.x = 0; // Set x position to 0
+      cameraPosition.y = 0; // Set y position to 0
+      cameraPosition.z = 0; // Set z position to 0
+      document.querySelector("#camera").setAttribute("position", cameraPosition);
+      
+      // Reset model position to match camera position
+      var model = document.querySelector("#model");
+      model.setAttribute("position", `${cameraPosition.x} ${cameraPosition.y} ${cameraPosition.z}`);
+    }
+
     // Start tracking location
     getLocation();
   </script>

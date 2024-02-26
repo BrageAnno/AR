@@ -76,13 +76,13 @@
   
   <a-scene>
     <!-- Blue Cube -->
-    <a-entity id="blue-cube" position="0 1.5 -2" geometry="primitive: box; width: 0.2; height: 0.2; depth: 0.2;" material="color: blue"></a-entity>
+    <a-entity id="blue-cube" geometry="primitive: box; width: 0.2; height: 0.2; depth: 0.2;" material="color: blue" position="0 0 -1"></a-entity>
     <!-- Trail Effect -->
     <a-entity id="trail" line="color: blue; opacity: 0.5"></a-entity>
     
     <a-entity id="camera" camera look-controls="touchEnabled: false">
       <!-- Small 3D Cube attached to camera -->
-      <a-entity position="0 0 -1" geometry="primitive: box; width: 0.05; height: 0.05; depth: 0.05;" material="color: red"></a-entity>
+      <a-entity position="0 0 -1"></a-entity>
     </a-entity>
     
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>

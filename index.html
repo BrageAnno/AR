@@ -29,6 +29,16 @@
       z-index: 1;
     }
 
+    #model {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+    }
+
     a-scene {
       position: fixed;
       width: 100%;
@@ -60,24 +70,39 @@
       background-color: rgba(255, 255, 255, 0.8);
       padding: 10px;
     }
+
+    .reset-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="arrow"></div>
   
   <a-scene>
+    <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
     <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
   </a-scene>
 
-  <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
-
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
+  <button class="reset-button" onclick="resetCameraPosition()">Reset Position</button>
   
   <div id="coordinates"></div>
 
   <script>
     const arrow = document.querySelector(".arrow");
+    let compass;
     let compassActive = false;
+    let lookControlsActive = false;
+    let initialPositionSet = false;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     function toggleCompass() {
@@ -102,6 +127,9 @@
               if (permissionState === 'granted') {
                 window.addEventListener("deviceorientation", compassHandler, true);
                 compassActive = true;
+                if (!lookControlsActive) {
+                  lookControlsActive = true;
+                }
               } else {
                 alert("Permission denied!");
               }
@@ -113,6 +141,9 @@
       } else {
         window.addEventListener("deviceorientationabsolute", compassHandler, true);
         compassActive = true;
+        if (!lookControlsActive) {
+          lookControlsActive = true;
+        }
       }
     }
 
@@ -120,13 +151,16 @@
       window.removeEventListener("deviceorientation", compassHandler, true);
       window.removeEventListener("deviceorientationabsolute", compassHandler, true);
       compassActive = false;
+      if (lookControlsActive) {
+        lookControlsActive = false;
+      }
     }
 
     function compassHandler(e) {
-      const compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-      if (compass !== undefined && compass !== null && compassActive) {
+      compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+      if (compass !== undefined && compass !== null) {
         arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-        document.querySelector("#camera").setAttribute("rotation", `0 ${compass} 0`);
+        document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
     }
 
@@ -135,40 +169,55 @@
     var conversionFactor = 111111; // Adjust this based on your location
 
     function getLocation() {
-      if (navigator.geolocation) {
-        watchID = navigator.geolocation.watchPosition(updateCameraPosition, showError, { enableHighAccuracy: true });
-      } else {
-        alert("Geolocation is not supported by this browser.");
-      }
+        if (navigator.geolocation) {
+            watchID = navigator.geolocation.watchPosition(updateCameraPosition, showError, { enableHighAccuracy: true });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     }
 
     function updateCameraPosition(position) {
-      var latitude = position.coords.latitude;
-      var longitude = position.coords.longitude;
-      var coordinatesDiv = document.getElementById("coordinates");
-      coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
-
-      var cameraPosition = document.querySelector("#camera").getAttribute("position");
-      cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
-      cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
-      document.querySelector("#camera").setAttribute("position", cameraPosition);
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var coordinatesDiv = document.getElementById("coordinates");
+        coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
+        if (!initialPositionSet) {
+          var cameraPosition = document.querySelector("#camera").getAttribute("position");
+          cameraPosition.x = 0; // Set initial x position to 0
+          cameraPosition.y = 0; // Set initial y position to 0
+          cameraPosition.z = 0; // Set initial z position to 0
+          document.querySelector("#camera").setAttribute("position", cameraPosition);
+          initialPositionSet = true;
+        }
+        var cameraPosition = document.querySelector("#camera").getAttribute("position");
+        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
+        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
+        document.querySelector("#camera").setAttribute("position", cameraPosition);
     }
 
     function showError(error) {
-      switch(error.code) {
-        case error.PERMISSION_DENIED:
-          alert("User denied the request for Geolocation.");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          alert("Location information is unavailable.");
-          break;
-        case error.TIMEOUT:
-          alert("The request to get user location timed out.");
-          break;
-        case error.UNKNOWN_ERROR:
-          alert("An unknown error occurred.");
-          break;
-      }
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
+        }
+    }
+
+    function resetCameraPosition() {
+      var cameraPosition = document.querySelector("#camera").getAttribute("position");
+      cameraPosition.x = 0; // Set x position to 0
+      cameraPosition.y = 0; // Set y position to 0
+      cameraPosition.z = 0; // Set z position to 0
+      document.querySelector("#camera").setAttribute("position", cameraPosition);
     }
 
     // Start tracking location

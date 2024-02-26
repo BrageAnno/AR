@@ -9,9 +9,6 @@
     body {
       margin: 0;
       padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       height: 100vh;
       background-color: #f0f0f0; /* Change the background color as needed */
     }
@@ -20,23 +17,12 @@
       position: absolute;
       width: 0;
       height: 0;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      top: 20px; /* Adjust as needed */
+      left: 20px; /* Adjust as needed */
       border-style: solid;
       border-width: 30px 20px 0 20px;
       border-color: red transparent transparent transparent;
       z-index: 1;
-    }
-
-    #model {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 0;
     }
 
     a-scene {
@@ -88,8 +74,8 @@
   <div class="arrow"></div>
   
   <a-scene>
-    <a-entity id="camera" camera look-controls="touchEnabled: false"></a-entity>
-    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0"></a-entity>
+    <a-entity id="camera" camera look-controls="touchEnabled: false" position="0 1.6 0"></a-entity> <!-- Adjust position as needed -->
+    <a-entity id="model" gltf-model="./360_HDRI_Test2.glb" rotation="0 0 0" position="0 0 -5"></a-entity> <!-- Adjust position as needed -->
   </a-scene>
 
   <button class="button red" onclick="toggleCompass()">Compass is Off</button>
@@ -159,7 +145,7 @@
     function compassHandler(e) {
       compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
       if (compass !== undefined && compass !== null) {
-        arrow.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+        arrow.style.transform = `rotate(${-compass}deg)`;
         document.querySelector("#model").setAttribute("rotation", `0 ${compass} 0`);
       }
     }

@@ -163,15 +163,21 @@
     }
 
     function updateCameraPosition(position) {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        var coordinatesDiv = document.getElementById("coordinates");
-        coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
-        var cameraPosition = document.querySelector("#camera").getAttribute("position");
-        cameraPosition.x = (longitude - position.coords.longitude) * conversionFactor; // Longitude mapped to x-axis
-        cameraPosition.z = (latitude - position.coords.latitude) * conversionFactor; // Latitude mapped to z-axis
-        document.querySelector("#camera").setAttribute("position", cameraPosition);
-    }
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    var coordinatesDiv = document.getElementById("coordinates");
+    coordinatesDiv.innerText = "Latitude: " + latitude.toFixed(6) + ", Longitude: " + longitude.toFixed(6);
+    
+    var cameraPosition = document.querySelector("#camera").getAttribute("position");
+    var scaleFactor = 10000; // Adjust as needed
+    
+    // Convert latitude and longitude to x and z coordinates
+    cameraPosition.x = (longitude - position.coords.longitude) * scaleFactor; // Longitude mapped to x-axis
+    cameraPosition.z = (latitude - position.coords.latitude) * scaleFactor; // Latitude mapped to z-axis
+    
+    // Update the camera position
+    document.querySelector("#camera").setAttribute("position", cameraPosition);
+}
 
     function showError(error) {
         switch(error.code) {
